@@ -1,127 +1,37 @@
-const backgroundColor = "black"
-const topViewBackgroundColor = "#555555"
-const topViewBlockColor = "turquoise"
-const topViewGridColor = "#111111"
-const topViewGridLineWidth = 1
-const xSize = 20
-const ySize = 20
-const topViewTop = 100
-const topViewLeft = 100
-const topViewBlockSize = 15
-const topViewBorderWidth = 30
-const topViewWidth = topViewBlockSize * xSize
-const topViewHeight = topViewBlockSize * ySize
+import { fillOuterWallBlocks } from "./fillOuterWallBlocks"
+import { move } from "./move"
+import { makeBlockArray } from "./makeBlockArray"
+import { resizeCanvas } from "./resizeCanvas"
+import { Block, Position } from "./types"
+import { drawTopView } from "./drawTopView"
+import { limitAngle } from "./limitAngle"
+import { handleClick } from "./handleClick"
+
+export const backgroundColor = "black"
+export const topViewBackgroundColor = "#555555"
+export const topViewBlockColor = "turquoise"
+export const topViewGridColor = "#111111"
+export const topViewGridLineWidth = 1
+export const xSize = 20
+export const ySize = 20
+export const topViewTop = 100
+export const topViewLeft = 100
+export const topViewBlockSize = 30
+export const topViewWidth = topViewBlockSize * xSize
+export const topViewHeight = topViewBlockSize * ySize
+export const topViewBorderWidth = 50
 let lastFrame: number = 0
 const frameCadence: number = 69
+export const fieldOfViewAngle = 60
+export const viewBoundryLineColor = "yellow"
+export const viewBoundryLineLength = 30
+export const characterColor = "red"
 
-const positionXMax = xSize * topViewBlockSize
-const positionYMax = ySize * topViewBlockSize
+export const positionXMax = xSize * topViewBlockSize
+export const positionYMax = ySize * topViewBlockSize
 
-const getRadians = (degrees: number) => {
-	return (degrees * Math.PI) / 180
-}
-
-type Block = {
-	state: boolean
-}
-
-const makeBlockArray = (xSize: number, ySize: number) => {
-	let array: [Block[]] = [[]]
-	for (let x = 0; x < xSize; x++) {
-		array[x] = []
-		for (let y = 0; y < ySize; y++) {
-			array[x][y] = {
-				state: false
-			}
-		}
-	}
-	return array
-}
-
-const drawTopView = (
-	blockArray: [Block[]],
-	ctx: CanvasRenderingContext2D,
-	position: Position
-) => {
-	ctx.fillStyle = topViewBackgroundColor
-	ctx.beginPath()
-	// clear the topView display
-	ctx.fillRect(
-		topViewLeft - topViewBorderWidth,
-		topViewTop - topViewBorderWidth,
-		topViewBlockSize * xSize + topViewBorderWidth * 2,
-		topViewBlockSize * ySize + topViewBorderWidth * 2
-	)
-	ctx.closePath()
-
-	// draw gridlines
-	ctx.strokeStyle = topViewGridColor
-	ctx.lineWidth = topViewGridLineWidth
-	// vertical
-	for (let x = 0; x <= blockArray.length; x++) {
-		ctx.beginPath()
-		ctx.moveTo(topViewLeft + x * topViewBlockSize, topViewTop)
-		ctx.lineTo(
-			topViewLeft + x * topViewBlockSize,
-			topViewTop + blockArray[0].length * topViewBlockSize
-		)
-		ctx.stroke()
-		ctx.closePath()
-	}
-	// horizontal
-	for (let y = 0; y <= blockArray[0].length; y++) {
-		ctx.beginPath()
-		ctx.moveTo(topViewLeft, topViewTop + y * topViewBlockSize)
-		ctx.lineTo(
-			topViewLeft + blockArray[0].length * topViewBlockSize,
-			topViewTop + y * topViewBlockSize
-		)
-		ctx.stroke()
-		ctx.closePath()
-	}
-
-	// draw blocks
-	for (let x = 0; x < blockArray.length; x++) {
-		for (let y = 0; y < blockArray.length; y++) {
-			if (blockArray[x][y].state) {
-				ctx.fillStyle = topViewBlockColor
-				ctx.fillRect(
-					topViewLeft + x * topViewBlockSize,
-					topViewTop + y * topViewBlockSize,
-					topViewBlockSize,
-					topViewBlockSize
-				)
-				ctx.closePath()
-			}
-		}
-	}
-
-	ctx.strokeStyle = "yellow"
-	ctx.beginPath()
-	ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
-	ctx.lineTo(
-		topViewLeft + position.x + 30 * -Math.sin(getRadians(position.angle)),
-		topViewTop + position.y + 30 * -Math.cos(getRadians(position.angle))
-	)
-	ctx.stroke()
-	ctx.closePath()
-	ctx.fillStyle = "red"
-	ctx.beginPath()
-	ctx.arc(
-		topViewLeft + position.x,
-		topViewTop + position.y,
-		3,
-		0,
-		2 * Math.PI
-	)
-	ctx.fill()
-	ctx.closePath()
-}
-
-export const resizeCanvas = (canvas: HTMLCanvasElement) => {
-	canvas.height = window.innerHeight - 4
-	canvas.width = window.innerWidth
-}
+export const rotationSpeed = 6
+export const movementSpeed = 6
 
 const renderLoop = (
 	timeStamp: number,
@@ -138,100 +48,23 @@ const renderLoop = (
 	)
 }
 
-const handleClick = (
-	e: MouseEvent,
-	blockArray: [Block[]],
-	ctx: CanvasRenderingContext2D,
-	position: Position
+const handleKeyDown = (
+	e: KeyboardEvent,
+	position: Position,
+	blockArray: [Block[]]
 ) => {
-	const { pageX, pageY } = e
-
-	const isClickInTopView = () => {
-		if (
-			pageX > topViewLeft &&
-			pageY > topViewTop &&
-			pageX < topViewLeft + topViewWidth &&
-			pageY < topViewTop + topViewHeight
-		) {
-			return true
-		}
-		return false
-	}
-	if (isClickInTopView()) {
-		const blockX = Math.floor((pageX - topViewLeft) / topViewBlockSize)
-		const blockY = Math.floor((pageY - topViewTop) / topViewBlockSize)
-		blockArray[blockX][blockY].state = !blockArray[blockX][blockY].state
-		drawTopView(blockArray, ctx, position)
-	}
-}
-
-const fillOuterWallBlocks = (blockArray: [Block[]]) => {
-	for (let x = 0; x < blockArray.length; x += blockArray.length - 1) {
-		for (let y = 0; y < blockArray[0].length; y++) {
-			blockArray[x][y].state = true
-		}
-	}
-	for (let y = 0; y < blockArray[0].length; y += blockArray[0].length - 1) {
-		for (let x = 1; x < blockArray.length - 1; x++) {
-			blockArray[x][y].state = true
-		}
-	}
-}
-
-type Position = {
-	x: number
-	y: number
-	angle: number
-}
-
-const handleKeyDown = (e: KeyboardEvent, position: Position) => {
-	const incAngle = (angle: number) => {
-		angle++
-		if (angle > 359) {
-			angle = 0
-		}
-		return angle
-	}
-
-	const decAngle = (angle: number) => {
-		angle--
-		if (angle < 0) {
-			angle = 359
-		}
-		return angle
-	}
-
-	const limitPosition = (position: Position) => {
-		if (position.x > positionXMax) position.x = positionXMax
-		if (position.x < 0) position.x = 0
-		if (position.y > positionYMax) position.y = positionYMax
-		if (position.y < 0) position.y = 0
-	}
-
-	const goForward = (angle: number) => {
-		position.x += Math.sin(getRadians(angle))
-		position.y += Math.cos(getRadians(angle))
-		limitPosition(position)
-	}
-
-	const goBackward = (angle: number) => {
-		position.x -= Math.sin(getRadians(angle))
-		position.y -= Math.cos(getRadians(angle))
-		limitPosition(position)
-	}
-
 	switch (e.key) {
 		case "ArrowUp":
-			goBackward(position.angle)
+			move(position, true, blockArray)
 			break
 		case "ArrowDown":
-			goForward(position.angle)
+			move(position, false, blockArray)
 			break
 		case "ArrowLeft":
-			position.angle = incAngle(position.angle)
+			position.angle = limitAngle(position.angle + rotationSpeed)
 			break
 		case "ArrowRight":
-			position.angle = decAngle(position.angle)
+			position.angle = limitAngle(position.angle - rotationSpeed)
 			break
 	}
 }
@@ -255,7 +88,9 @@ const initialize = () => {
 	canvas.addEventListener("click", (e) =>
 		handleClick(e, blockArray, ctx, position)
 	)
-	window.addEventListener("keydown", (e) => handleKeyDown(e, position))
+	window.addEventListener("keydown", (e) =>
+		handleKeyDown(e, position, blockArray)
+	)
 	canvas.focus()
 	fillOuterWallBlocks(blockArray)
 	window.requestAnimationFrame((timeStamp) =>
