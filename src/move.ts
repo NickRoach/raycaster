@@ -31,9 +31,24 @@ const limitPosition = (
 	if (position.y > positionYMax) newPosition.y = positionYMax
 	if (position.y < 0) newPosition.y = 0
 
-	// don't allow passage into state: true blocks
+	// limit which blocks it can go into
 	const currentBlockAddress = getBlockAddress(position)
 	const newBlockAddress = getBlockAddress(newPosition)
+
+	if (newBlockAddress.x > blockArray.length - 1) {
+		newPosition.x = position.x
+		newBlockAddress.x = currentBlockAddress.x
+	} else if (newBlockAddress.x < 0) {
+		newPosition.x = position.x
+		newBlockAddress.x = currentBlockAddress.x
+	}
+	if (newBlockAddress.y > blockArray[0].length - 1) {
+		newPosition.y = position.y
+		newBlockAddress.y = currentBlockAddress.y
+	} else if (newBlockAddress.y < 0) {
+		newPosition.y = position.y
+		newBlockAddress.y = currentBlockAddress.y
+	}
 
 	const newBlock: boolean =
 		newBlockAddress.x != currentBlockAddress.x ||
@@ -119,8 +134,6 @@ export const move = (
 		x: position.x,
 		y: position.y
 	}
-
-	const strafeAngle = position.angle + 90
 
 	const xUnits = Math.sin(getRadians(position.angle))
 	const yUnits = Math.cos(getRadians(position.angle))

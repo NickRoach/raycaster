@@ -4,9 +4,7 @@ import { makeBlockArray } from "./makeBlockArray"
 import { resizeCanvas } from "./resizeCanvas"
 import { Block, KeyPresses, Position } from "./types"
 import { drawTopView } from "./drawTopView"
-import { limitAngle } from "./limitAngle"
 import { handleClick } from "./handleClick"
-import { adjustDirection } from "./adjustDirection"
 
 export const backgroundColor = "black"
 export const topViewBackgroundColor = "#555555"
@@ -15,9 +13,9 @@ export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
 export const xSize = 20
 export const ySize = 20
-export const topViewTop = 100
-export const topViewLeft = 100
-export const topViewBlockSize = 30
+export const topViewTop = 50
+export const topViewLeft = 50
+export const topViewBlockSize = 20
 export const topViewWidth = topViewBlockSize * xSize
 export const topViewHeight = topViewBlockSize * ySize
 export const topViewBorderWidth = 50
@@ -124,7 +122,6 @@ const initialize = () => {
 	)
 	window.addEventListener("keydown", (e) => handleKeyDown(e, keyPresses))
 	window.addEventListener("keyup", (e) => handleKeyUp(e, keyPresses))
-	canvas.focus()
 	fillOuterWallBlocks(blockArray)
 	window.requestAnimationFrame((timeStamp) =>
 		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
