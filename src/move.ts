@@ -2,13 +2,16 @@ import {
 	movementSpeed,
 	positionXMax,
 	positionYMax,
+	strafeSpeed,
 	topViewHeight,
 	topViewWidth,
 	xSize,
 	ySize
 } from "."
+import { adjustDirection } from "./adjustDirection"
 import { getRadians } from "./getRadians"
-import { Block, Position } from "./types"
+import { limitAngle } from "./limitAngle"
+import { Block, KeyPresses, Position } from "./types"
 
 const getBlockAddress = (position: Position) => {
 	return {
@@ -108,7 +111,7 @@ const limitPosition = (
 
 export const move = (
 	position: Position,
-	direction: boolean,
+	keyPresses: KeyPresses,
 	blockArray: [Block[]]
 ) => {
 	let newPosition = {
@@ -116,14 +119,34 @@ export const move = (
 		x: position.x,
 		y: position.y
 	}
-	const sin = Math.sin(getRadians(position.angle)) * movementSpeed
-	const cos = Math.cos(getRadians(position.angle)) * movementSpeed
-	if (direction) {
-		newPosition.x -= sin
-		newPosition.y -= cos
+
+	const strafeAngle = position.angle + 90
+
+	const xUnits = Math.sin(getRadians(position.angle))
+	const yUnits = Math.cos(getRadians(position.angle))
+
+	if (!keyPresses.shift) {
+		adjustDirection(keyPresses, position)
 	} else {
-		newPosition.x += sin
-		newPosition.y += cos
+		if (keyPresses.left) {
+			const strafeXUnits = Math.sin(getRadians(position.angle - 90))
+			const strafeYUnits = Math.cos(getRadians(position.angle - 90))
+			newPosition.x += strafeXUnits * strafeSpeed
+			newPosition.y += strafeYUnits * strafeSpeed
+		} else if (keyPresses.right) {
+			const strafeXUnits = Math.sin(getRadians(position.angle + 90))
+			const strafeYUnits = Math.cos(getRadians(position.angle + 90))
+			newPosition.x += strafeXUnits * strafeSpeed
+			newPosition.y += strafeYUnits * strafeSpeed
+		}
+	}
+
+	if (keyPresses.up) {
+		newPosition.x -= xUnits * movementSpeed
+		newPosition.y -= yUnits * movementSpeed
+	} else if (keyPresses.down) {
+		newPosition.x += xUnits * movementSpeed
+		newPosition.y += yUnits * movementSpeed
 	}
 	const limitedPosition = limitPosition(position, newPosition, blockArray)
 	position.x = limitedPosition.x

@@ -2,10 +2,11 @@ import { fillOuterWallBlocks } from "./fillOuterWallBlocks"
 import { move } from "./move"
 import { makeBlockArray } from "./makeBlockArray"
 import { resizeCanvas } from "./resizeCanvas"
-import { Block, Position } from "./types"
+import { Block, KeyPresses, Position } from "./types"
 import { drawTopView } from "./drawTopView"
 import { limitAngle } from "./limitAngle"
 import { handleClick } from "./handleClick"
+import { adjustDirection } from "./adjustDirection"
 
 export const backgroundColor = "black"
 export const topViewBackgroundColor = "#555555"
@@ -20,8 +21,8 @@ export const topViewBlockSize = 30
 export const topViewWidth = topViewBlockSize * xSize
 export const topViewHeight = topViewBlockSize * ySize
 export const topViewBorderWidth = 50
-let lastFrame: number = 0
-const frameCadence: number = 69
+let lastFrame = 0
+const frameCadence = 20
 export const fieldOfViewAngle = 60
 export const viewBoundryLineColor = "yellow"
 export const viewBoundryLineLength = 30
@@ -30,41 +31,66 @@ export const characterColor = "red"
 export const positionXMax = xSize * topViewBlockSize
 export const positionYMax = ySize * topViewBlockSize
 
-export const rotationSpeed = 6
-export const movementSpeed = 6
+export const rotationSpeed = 20 / frameCadence
+export const movementSpeed = 30 / frameCadence
+export const strafeSpeed = 20 / frameCadence
 
 const renderLoop = (
 	timeStamp: number,
 	blockArray: [Block[]],
 	ctx: CanvasRenderingContext2D,
-	position: Position
+	position: Position,
+	keyPresses: KeyPresses
 ) => {
 	if (timeStamp - lastFrame > frameCadence) {
 		lastFrame = timeStamp
 		drawTopView(blockArray, ctx, position)
 	}
+	move(position, keyPresses, blockArray)
 	window.requestAnimationFrame((timeStamp) =>
-		renderLoop(timeStamp, blockArray, ctx, position)
+		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
 	)
 }
 
-const handleKeyDown = (
-	e: KeyboardEvent,
-	position: Position,
-	blockArray: [Block[]]
-) => {
+const handleKeyDown = (e: KeyboardEvent, keyPresses: KeyPresses) => {
 	switch (e.key) {
 		case "ArrowUp":
-			move(position, true, blockArray)
+			keyPresses.up = true
+			keyPresses.down = false
 			break
 		case "ArrowDown":
-			move(position, false, blockArray)
+			keyPresses.down = true
+			keyPresses.up = false
 			break
 		case "ArrowLeft":
-			position.angle = limitAngle(position.angle + rotationSpeed)
+			keyPresses.left = true
+			keyPresses.right = false
 			break
 		case "ArrowRight":
-			position.angle = limitAngle(position.angle - rotationSpeed)
+			keyPresses.right = true
+			break
+		case "Shift":
+			keyPresses.shift = true
+			break
+	}
+}
+
+const handleKeyUp = (e: KeyboardEvent, keyPresses: KeyPresses) => {
+	switch (e.key) {
+		case "ArrowUp":
+			keyPresses.up = false
+			break
+		case "ArrowDown":
+			keyPresses.down = false
+			break
+		case "ArrowLeft":
+			keyPresses.left = false
+			break
+		case "ArrowRight":
+			keyPresses.right = false
+			break
+		case "Shift":
+			keyPresses.shift = false
 			break
 	}
 }
@@ -85,16 +111,23 @@ const initialize = () => {
 		y: 170,
 		angle: 0
 	}
+	const keyPresses: KeyPresses = {
+		up: false,
+		down: false,
+		left: false,
+		right: false,
+		shift: false
+	}
+
 	canvas.addEventListener("click", (e) =>
 		handleClick(e, blockArray, ctx, position)
 	)
-	window.addEventListener("keydown", (e) =>
-		handleKeyDown(e, position, blockArray)
-	)
+	window.addEventListener("keydown", (e) => handleKeyDown(e, keyPresses))
+	window.addEventListener("keyup", (e) => handleKeyUp(e, keyPresses))
 	canvas.focus()
 	fillOuterWallBlocks(blockArray)
 	window.requestAnimationFrame((timeStamp) =>
-		renderLoop(timeStamp, blockArray, ctx, position)
+		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
 	)
 }
 

@@ -8,3 +8,11 @@ export type Position = {
 	y: number
 	angle: number
 }
+
+export type KeyPresses = {
+	up: boolean
+	down: boolean
+	left: boolean
+	right: boolean
+	shift: boolean
+}
