@@ -9,7 +9,11 @@ import {
 	topViewBlockSize,
 	topViewLeft,
 	topViewTop,
-	topViewWidth
+	topViewWidth,
+	raycastFloorColor,
+	darkenPower,
+	raycastCeilingColor,
+	floorDarkenPower
 } from "."
 import { getBlockAddressXY } from "./getBlockAddress"
 import { getRadians } from "./getRadians"
@@ -27,6 +31,49 @@ export const raycast = (
 	ctx.fillStyle = raycastBackgroundColor
 	ctx.fillRect(raycastLeft, raycastTop, raycastWidth, raycastHeight)
 	ctx.closePath()
+
+	// draw floor
+	const rf = Number(`0x${raycastFloorColor.slice(1, 3)}`)
+	const gf = Number(`0x${raycastFloorColor.slice(3, 5)}`)
+	const bf = Number(`0x${raycastFloorColor.slice(5, 7)}`)
+	for (
+		let i = raycastTop + raycastHeight;
+		i > raycastTop + raycastHeight / 2;
+		i--
+	) {
+		const f = Math.pow(
+			(i - raycastHeight / 2) / (raycastHeight / 2),
+			floorDarkenPower
+		)
+		const ar = (rf * f).toFixed(0)
+		const ag = (gf * f).toFixed(0)
+		const ab = (bf * f).toFixed(0)
+
+		ctx.strokeStyle = `rgb(${ar},${ag},${ab})`
+		ctx.beginPath()
+		ctx.moveTo(raycastLeft, i)
+		ctx.lineTo(raycastLeft + raycastWidth, i)
+		ctx.stroke()
+		ctx.closePath()
+	}
+
+	// draw ceiling
+	const rc = Number(`0x${raycastCeilingColor.slice(1, 3)}`)
+	const gc = Number(`0x${raycastCeilingColor.slice(3, 5)}`)
+	const bc = Number(`0x${raycastCeilingColor.slice(5, 7)}`)
+	for (let i = raycastTop + raycastHeight / 2; i > raycastTop; i--) {
+		const f = Math.pow(i / (raycastHeight / 2), floorDarkenPower)
+		const ar = (rc * f).toFixed(0)
+		const ag = (gc * f).toFixed(0)
+		const ab = (bc * f).toFixed(0)
+
+		ctx.strokeStyle = `rgb(${ar},${ag},${ab})`
+		ctx.beginPath()
+		ctx.moveTo(raycastLeft, i)
+		ctx.lineTo(raycastLeft + raycastWidth, i)
+		ctx.stroke()
+		ctx.closePath()
+	}
 
 	const getCorrectedAngle = (angle: number) => {
 		let corr = angle
@@ -179,10 +226,9 @@ export const raycast = (
 		)
 		const f = Math.pow(
 			(fullDarkDistance - distance) / fullDarkDistance,
-			3.5
+			darkenPower
 		)
 
-		// draw color
 		ctx.beginPath()
 		const color = blockArray[0][0].color
 

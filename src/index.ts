@@ -10,39 +10,43 @@ import { raycast } from "./raycast"
 
 export const backgroundColor = "black"
 export const topViewBackgroundColor = "#555555"
-export const topViewBlockColor = "#34ACA0"
+export const topViewBlockColor = "#660000"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
-export const xSize = 5
-export const ySize = 5
-export const topViewBlockSize = 70
+export const xSize = 30
+export const ySize = 30
+export const topViewBlockSize = 15
+export const topViewWidth = topViewBlockSize * xSize
+export const topViewHeight = topViewBlockSize * ySize
 export const topViewTop = 50
 export const topViewLeft = 50
 export const positionXMax = xSize * topViewBlockSize
 export const positionYMax = ySize * topViewBlockSize
-export const topViewWidth = topViewBlockSize * xSize
-export const topViewHeight = topViewBlockSize * ySize
 export const topViewBorderWidth = 50
-export const fieldOfViewAngle = 60
+export const fieldOfViewAngle = 45
 export const viewBoundryLineColor = "yellow"
 export const viewBoundryLineLength = 50
 export const characterColor = "red"
-export const raycastLeft = 500
+export const raycastLeft = 550
 export const raycastTop = 50
-export const raycastHeight = 600
-export const raycastWidth = 900
+export const raycastHeight = 800
+export const raycastWidth = 1300
 export const raycastBackgroundColor = "#111111"
+export const raycastFloorColor = "#662222"
+export const raycastCeilingColor = "#666666"
+export const darkenPower = 2.5
+export const floorDarkenPower = 1.5
 
 let lastFrame = 0
-const frameCadence = 100
+const frameCadence = 30
 // const initialX = topViewWidth / 2 + 1
 // const initialY = topViewHeight / 2 + 1
 const initialX = 123
 const initialY = 192
 const initialAngle = 45
-export const rotationSpeed = 5 / frameCadence
+export const rotationSpeed = 10 / frameCadence
 export const movementSpeed = 10 / frameCadence
-export const strafeSpeed = 20 / frameCadence
+export const strafeSpeed = 10 / frameCadence
 
 const renderLoop = (
 	timeStamp: number,
