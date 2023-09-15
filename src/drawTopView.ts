@@ -94,10 +94,12 @@ export const drawTopView = (
 	ctx.lineTo(
 		topViewLeft +
 			position.x +
-			30 * -Math.sin(getRadians(position.angle - fieldOfViewAngle / 2)),
+			viewBoundryLineLength *
+				-Math.sin(getRadians(-position.angle - fieldOfViewAngle / 2)),
 		topViewTop +
 			position.y +
-			30 * -Math.cos(getRadians(position.angle - fieldOfViewAngle / 2))
+			viewBoundryLineLength *
+				-Math.cos(getRadians(-position.angle - fieldOfViewAngle / 2))
 	)
 	ctx.stroke()
 	ctx.closePath()
@@ -108,15 +110,16 @@ export const drawTopView = (
 		topViewLeft +
 			position.x -
 			viewBoundryLineLength *
-				Math.sin(getRadians(position.angle + fieldOfViewAngle / 2)),
+				Math.sin(getRadians(-position.angle + fieldOfViewAngle / 2)),
 		topViewTop +
 			position.y -
 			viewBoundryLineLength *
-				Math.cos(getRadians(position.angle + fieldOfViewAngle / 2))
+				Math.cos(getRadians(-position.angle + fieldOfViewAngle / 2))
 	)
 	ctx.stroke()
 	ctx.closePath()
 
+	// draw character
 	ctx.fillStyle = characterColor
 	ctx.beginPath()
 	ctx.arc(

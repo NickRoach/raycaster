@@ -9,16 +9,10 @@ import {
 	ySize
 } from "."
 import { adjustDirection } from "./adjustDirection"
+import { getBlockAddress } from "./getBlockAddress"
 import { getRadians } from "./getRadians"
 import { limitAngle } from "./limitAngle"
 import { Block, KeyPresses, Position } from "./types"
-
-const getBlockAddress = (position: Position) => {
-	return {
-		x: Math.floor((position.x / topViewWidth) * xSize),
-		y: Math.floor((position.y / topViewHeight) * ySize)
-	}
-}
 
 const limitPosition = (
 	position: Position,
@@ -135,20 +129,20 @@ export const move = (
 		y: position.y
 	}
 
-	const xUnits = Math.sin(getRadians(position.angle))
-	const yUnits = Math.cos(getRadians(position.angle))
+	const xUnits = Math.sin(getRadians(-position.angle))
+	const yUnits = Math.cos(getRadians(-position.angle))
 
 	if (!keyPresses.shift) {
 		adjustDirection(keyPresses, position)
 	} else {
 		if (keyPresses.left) {
-			const strafeXUnits = Math.sin(getRadians(position.angle - 90))
-			const strafeYUnits = Math.cos(getRadians(position.angle - 90))
+			const strafeXUnits = Math.sin(getRadians(-position.angle - 90))
+			const strafeYUnits = Math.cos(getRadians(-position.angle - 90))
 			newPosition.x += strafeXUnits * strafeSpeed
 			newPosition.y += strafeYUnits * strafeSpeed
 		} else if (keyPresses.right) {
-			const strafeXUnits = Math.sin(getRadians(position.angle + 90))
-			const strafeYUnits = Math.cos(getRadians(position.angle + 90))
+			const strafeXUnits = Math.sin(getRadians(-position.angle + 90))
+			const strafeYUnits = Math.cos(getRadians(-position.angle + 90))
 			newPosition.x += strafeXUnits * strafeSpeed
 			newPosition.y += strafeYUnits * strafeSpeed
 		}
