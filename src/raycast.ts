@@ -101,85 +101,47 @@ export const raycast = (
 		// 	}
 		// }
 
+		// sv is for "switch left". It is 1 when looking left
+		let sl = angle < 359 && angle > 180 ? 1 : 0
+		// sfv is for "sign flip left"
+		let sfv = sl === 1 ? -1 : 1
+
 		/////////////////////////////////////////////////////////////
-		// vertical intersects when looking right
-		if (angle >= 0 && angle <= 180) {
-			// find closest verticalIntersect
-			const x1 = (topViewWidth - position.x) % topViewBlockSize
-			const y1 = x1 / Math.tan(getRadians(angle))
-			const int1X = position.x + x1
-			const int1Y = position.y - y1
+		// vertical intersects
+		// find closest verticalIntersect
+		const x1 = (topViewWidth * sl - position.x * sfv) % topViewBlockSize
+		const y1 = x1 / Math.tan(getRadians(360 * sl + angle * sfv))
+		const int1X = position.x + x1 * sfv
+		const int1Y = position.y - y1
 
-			if (isOOR(int1X, int1Y)) searchEnd = true
-			if (!searchEnd) {
-				const addr = getBlockAddressXY(int1X, int1Y)
-				const state = blockArray[addr.x][addr.y].state
-				if (state) {
-					searchEnd = true
-					foundIntX = int1X
-					foundIntY = int1Y
-				}
-			}
-
-			let i = 1
-			while (!searchEnd) {
-				const x = x1 + topViewBlockSize * i
-				const y = x / Math.tan(getRadians(angle))
-
-				const intX = position.x + x
-				const intY = position.y - y
-				if (isOOR(intX, intY)) searchEnd = true
-				if (!searchEnd) {
-					const addr = getBlockAddressXY(intX, intY)
-					const state = blockArray[addr.x][addr.y].state
-					if (state) {
-						searchEnd = true
-						foundIntX = intX
-						foundIntY = intY
-					}
-					i++
-				}
+		if (isOOR(int1X, int1Y)) searchEnd = true
+		if (!searchEnd) {
+			const addr = getBlockAddressXY(int1X, int1Y)
+			const state = blockArray[addr.x][addr.y].state
+			if (state) {
+				searchEnd = true
+				foundIntX = int1X
+				foundIntY = int1Y
 			}
 		}
 
-		/////////////////////////////////////////////////////////////
-		// vertical intersects when looking left
-		if (angle < 359 && angle > 180) {
-			// find closest verticalIntersect
-			const x1 = position.x % topViewBlockSize
-			const y1 = x1 / Math.tan(getRadians(360 - angle))
-			const int1X = position.x - x1
-			const int1Y = position.y - y1
+		let i = 1
+		while (!searchEnd) {
+			const x = x1 + topViewBlockSize * i
+			const y = x / Math.tan(getRadians(360 * sl + angle * sfv))
 
-			if (isOOR(int1X, int1Y)) searchEnd = true
+			const intX = position.x + x * sfv
+			const intY = position.y - y
+			if (isOOR(intX, intY)) searchEnd = true
 			if (!searchEnd) {
-				const addr = getBlockAddressXY(int1X, int1Y)
-				const state = blockArray[addr.x][addr.y].state
+				const addr = getBlockAddressXY(intX, intY)
+				const state = blockArray[addr.x - sl * 1][addr.y].state
 				if (state) {
 					searchEnd = true
-					foundIntX = int1X
-					foundIntY = int1Y
+					foundIntX = intX
+					foundIntY = intY
 				}
-			}
-
-			let i = 1
-			while (!searchEnd) {
-				const x = x1 + topViewBlockSize * i
-				const y = x / Math.tan(getRadians(360 - angle))
-
-				const intX = position.x - x
-				const intY = position.y - y
-				if (isOOR(intX, intY)) searchEnd = true
-				if (!searchEnd) {
-					const addr = getBlockAddressXY(intX, intY)
-					const state = blockArray[addr.x - 1][addr.y].state
-					if (state) {
-						searchEnd = true
-						foundIntX = intX
-						foundIntY = intY
-					}
-					i++
-				}
+				i++
 			}
 		}
 
