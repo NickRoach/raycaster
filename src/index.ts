@@ -13,11 +13,11 @@ export const topViewBackgroundColor = "#555555"
 export const topViewBlockColor = "#34ACA0"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
-export const xSize = 5
-export const ySize = 5
+export const xSize = 20
+export const ySize = 20
 export const topViewTop = 50
 export const topViewLeft = 50
-export const topViewBlockSize = 50
+export const topViewBlockSize = 15
 export const positionXMax = xSize * topViewBlockSize
 export const positionYMax = ySize * topViewBlockSize
 export const topViewWidth = topViewBlockSize * xSize
@@ -34,9 +34,12 @@ export const raycastWidth = 900
 export const raycastBackgroundColor = "#111111"
 
 let lastFrame = 0
-const frameCadence = 20
+const frameCadence = 100
+const initialX = topViewWidth / 2 + 1
+const initialY = topViewHeight / 2 + 1
+const initialAngle = 30
 export const rotationSpeed = 20 / frameCadence
-export const movementSpeed = 10 / frameCadence
+export const movementSpeed = 100 / frameCadence
 export const strafeSpeed = 20 / frameCadence
 
 const renderLoop = (
@@ -49,9 +52,10 @@ const renderLoop = (
 	if (timeStamp - lastFrame > frameCadence) {
 		lastFrame = timeStamp
 		drawTopView(blockArray, ctx, position)
+		raycast(position, blockArray, ctx)
 	}
 	move(position, keyPresses, blockArray)
-	raycast(position, blockArray, ctx)
+
 	window.requestAnimationFrame((timeStamp) =>
 		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
 	)
@@ -69,9 +73,9 @@ const initialize = () => {
 	window.onresize = () => resizeCanvas(canvas)
 	const blockArray = makeBlockArray(xSize, ySize)
 	const position = {
-		x: 170,
-		y: 170,
-		angle: 0
+		x: initialX,
+		y: initialY,
+		angle: initialAngle
 	}
 	const keyPresses: KeyPresses = {
 		up: false,

@@ -13,8 +13,10 @@ import {
 	topViewTop,
 	topViewWidth
 } from "."
+import { drawDot } from "./drawDot"
 import { getBlockAddress, getBlockAddressXY } from "./getBlockAddress"
 import { getRadians } from "./getRadians"
+import { isOOR } from "./isOOR"
 import { limitAngle } from "./limitAngle"
 import { Block, Position } from "./types"
 
@@ -41,26 +43,9 @@ export const raycast = (
 
 	const getUpDown = (position: Position) => {
 		if (position.angle < 90 || position.angle > 270) {
-			return true
+			return -1
 		}
-		return false
-	}
-	const getRightLeft = (position: Position) => {
-		if (position.angle < 0 && position.angle < 180) {
-			return true
-		}
-		return false
-	}
-
-	const isOOR = (intX: number, intY: number) => {
-		if (
-			intY > topViewHeight - 1 ||
-			intY < 0 ||
-			intX > topViewWidth ||
-			intX < 0
-		)
-			return true
-		else return false
+		return +1
 	}
 
 	const getDistance = (intX: number, intY: number, position: Position) => {
@@ -71,38 +56,83 @@ export const raycast = (
 
 	// for every angle/column, we need the distance to the closest intersect with a solid block
 
-	for (let column = 0; column < raycastWidth; column++) {
-		const angle = startAngle + angleInc * column
+	for (let column = 0; column < raycastWidth - 1; column++) {
+		const angle = limitAngle(startAngle + angleInc * column)
+		// const angle = limitAngle(position.angle)
 
-		// int the top half
 		let searchEnd: boolean = false
 		let foundIntX: number
 		let foundIntY: number
-		const y1 = position.y % topViewBlockSize
-		const x1 = y1 * Math.tan(getRadians(angle))
+
+		// in the top half
+
+		// find closest horizontalIntersect
+		// const y1 = position.y % topViewBlockSize
+		// const x1 = y1 * Math.tan(getRadians(angle))
+		// const int1Y = position.y - y1
+		// const int1X = x1 + position.x
+		// if (isOOR(int1X, int1Y)) searchEnd = true
+		// if (!searchEnd) {
+		// 	const addr = getBlockAddressXY(int1X, int1Y)
+		// 	const state = blockArray[addr.x][addr.y - 1].state
+		// 	if (state) {
+		// 		searchEnd = true
+		// 		foundIntX = int1X
+		// 		foundIntY = int1Y
+		// 	}
+		// }
+		// let i = 1
+		// while (!searchEnd) {
+		// 	const y = y1 + topViewBlockSize * i
+		// 	const x = y * Math.tan(getRadians(angle))
+
+		// 	const intX = position.x + x
+		// 	const intY = position.y - y
+		// 	if (isOOR(intX, intY)) searchEnd = true
+		// 	if (!searchEnd) {
+		// 		const addr = getBlockAddressXY(intX, intY)
+		// 		const state = blockArray[addr.x][addr.y - 1].state
+		// 		if (state) {
+		// 			searchEnd = true
+		// 			foundIntX = intX
+		// 			foundIntY = intY
+		// 		}
+		// 		i++
+		// 	}
+		// }
+
+		/////////////////////////////////////////////////////////////
+		// when looking right
+		// if (angle > 0 && angle < 180) {
+		// find closest verticalIntersect
+		const x1 = (topViewWidth - position.x) % topViewBlockSize
+		const y1 = x1 / Math.tan(getRadians(angle))
+		const int1X = position.x + x1
 		const int1Y = position.y - y1
-		const int1X = x1 + position.x
+
 		if (isOOR(int1X, int1Y)) searchEnd = true
 		if (!searchEnd) {
 			const addr = getBlockAddressXY(int1X, int1Y)
-			const state = blockArray[addr.x][addr.y - 1].state
+			const state = blockArray[addr.x][addr.y].state
 			if (state) {
 				searchEnd = true
 				foundIntX = int1X
 				foundIntY = int1Y
 			}
 		}
+		// }
+
 		let i = 1
 		while (!searchEnd) {
-			const y = y1 + topViewBlockSize * i
-			const x = y * Math.tan(getRadians(angle))
+			const x = x1 + topViewBlockSize * i
+			const y = x / Math.tan(getRadians(angle))
 
 			const intX = position.x + x
 			const intY = position.y - y
 			if (isOOR(intX, intY)) searchEnd = true
 			if (!searchEnd) {
 				const addr = getBlockAddressXY(intX, intY)
-				const state = blockArray[addr.x][addr.y - 1].state
+				const state = blockArray[addr.x][addr.y].state
 				if (state) {
 					searchEnd = true
 					foundIntX = intX
@@ -112,6 +142,9 @@ export const raycast = (
 			}
 		}
 
+		/////////////////////////////////////////////////////////////
+
+		// draw rendered intersects in topView
 		ctx.fillStyle = "red"
 		ctx.beginPath()
 		ctx.arc(
@@ -124,15 +157,31 @@ export const raycast = (
 		ctx.fill()
 		ctx.closePath()
 
+		// render in the raycast view
 		const distance = getDistance(foundIntX, foundIntY, position)
-		const fractionDistance = distance / topViewHeight
-		const transparency = Math.floor(255 - fractionDistance * 255).toString(
-			16
-		)
+		const fractionDistance =
+			distance /
+			Math.sqrt(
+				topViewHeight * topViewHeight + topViewWidth * topViewWidth
+			)
+		const darkness = Math.floor(fractionDistance * 255).toString(16)
+
+		// draw color
 		ctx.beginPath()
-		ctx.strokeStyle = `${blockArray[0][0].color}${transparency}`
-		const lineHeight = 5000 / getDistance(foundIntX, foundIntY, position)
-		const x = raycastLeft + column
+		ctx.strokeStyle = blockArray[0][0].color
+		const lineHeight = Math.min(
+			5000 / getDistance(foundIntX, foundIntY, position),
+			raycastHeight
+		)
+		const x = raycastLeft + column + 1
+		ctx.moveTo(x, yCenter + lineHeight / 2)
+		ctx.lineTo(x, yCenter - lineHeight / 2)
+		ctx.stroke()
+		ctx.closePath()
+
+		// draw darkness
+		ctx.beginPath()
+		ctx.strokeStyle = `#000000${darkness}`
 		ctx.moveTo(x, yCenter + lineHeight / 2)
 		ctx.lineTo(x, yCenter - lineHeight / 2)
 		ctx.stroke()
