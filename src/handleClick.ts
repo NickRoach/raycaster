@@ -15,6 +15,7 @@ export const handleClick = (
 	position: Position
 ) => {
 	const { pageX, pageY } = e
+	console.log(position)
 
 	const isClickInTopView = () => {
 		if (
