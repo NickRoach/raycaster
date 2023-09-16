@@ -3,7 +3,8 @@ import {
 	raycastWidth,
 	topViewBlockSize,
 	topViewLeft,
-	topViewTop
+	topViewTop,
+	topViewWidth
 } from "./constants"
 import { drawDot } from "./drawDot"
 import { drawFloorAndSky } from "./drawFloorAndSky"
@@ -45,45 +46,26 @@ export const raycast = (
 
 		let searchEnd: boolean = false
 
-		// works when facing up
-		// const y1h = position.y % topViewBlockSize
-		// let i = 0
-		// while (!searchEnd) {
-		// 	const y = y1h + topViewBlockSize * i
-		// 	const x = y * Math.tan(getRadians(angle))
+		// works facing both up and down
+		// sd is 1 if facing down. switch down
+		const sd = angle > 90 && angle < 270 ? 1 : 0
+		const su = sd === 1 ? 0 : 1
+		// ssd is -1 when facing down. switch sign down
+		const ssd = sd === 1 ? -1 : 1
 
-		// 	const intX = position.x + x
-		// 	const intY = position.y - y
-		// 	if (isOOR(intX, intY)) searchEnd = true
-		// 	if (!searchEnd) {
-		// 		const addr = getBlockAddressXY(intX, intY)
-		// 		const block = blockArray[addr.x][addr.y - 1]
-		// 		const state = block.state
-		// 		if (state) {
-		// 			searchEnd = true
-		// 			foundIntXH = intX
-		// 			foundIntYH = intY
-		// 			intBlockH = block
-		// 		}
-		// 		i++
-		// 	}
-
-		// let s
-		// if(angle > 90 && angle < 270)
-
-		// try to make work facing down
 		searchEnd = false
-		const y1h = topViewBlockSize - (position.y % topViewBlockSize)
+		const y1h =
+			sd * topViewBlockSize + ssd * (position.y % topViewBlockSize)
 		let i = 0
 		while (!searchEnd) {
 			const y = y1h + topViewBlockSize * i
-			const x = y * Math.tan(getRadians(360 - angle))
+			const x = y * Math.tan(getRadians(sd * 360 + ssd * angle))
 			const intX = position.x + x
-			const intY = position.y + y
+			const intY = position.y - ssd * y
 			if (isOOR(intX, intY)) searchEnd = true
 			if (!searchEnd) {
 				const addr = getBlockAddressXY(intX, intY)
-				const block = blockArray[addr.x][addr.y]
+				const block = blockArray[addr.x][addr.y - su]
 				const state = block.state
 				if (state) {
 					searchEnd = true
@@ -100,41 +82,41 @@ export const raycast = (
 		// WORKS WHEN FACING RIGHT ONLY
 
 		// sv is for "switch left". It is 1 when looking left
-		// const sl = angle < 359 && angle > 180 ? 1 : 0
-		// // sfv is for "sign flip left". It is -1 when looking left
-		// const sfv = sl === 1 ? -1 : 1
+		const sl = angle < 359 && angle > 180 ? 1 : 0
+		// sfv is for "sign flip left". It is -1 when looking left
+		const sfv = sl === 1 ? -1 : 1
 
-		// let foundIntXV: number = 10000
-		// let foundIntYV: number = 10000
-		// searchEnd = false
-		// // horizontal distance to the first vertical intercept
-		// const x1v = (topViewWidth - position.x) % topViewBlockSize
+		let foundIntXV: number = 10000
+		let foundIntYV: number = 10000
+		searchEnd = false
+		// horizontal distance to the first vertical intercept
+		const x1v = (topViewWidth - position.x) % topViewBlockSize
 
-		// let j = 0
-		// while (!searchEnd) {
-		// 	// horizontal distance to next x intercept
-		// 	const x = x1v + topViewBlockSize * j
-		// 	// vertical distance to that intercept
-		// 	const y = x / Math.tan(getRadians(360 + angle))
+		let j = 0
+		while (!searchEnd) {
+			// horizontal distance to next x intercept
+			const x = x1v + topViewBlockSize * j
+			// vertical distance to that intercept
+			const y = x / Math.tan(getRadians(360 + angle))
 
-		// 	const intX = position.x + x * sfv
-		// 	const intY = position.y - y
-		// 	if (isOOR(intX, intY)) searchEnd = true
-		// 	if (!searchEnd) {
-		// 		const addr = getBlockAddressXY(intX, intY)
-		// 		const block = blockArray[addr.x][addr.y]
-		// 		const state = block.state
-		// 		if (state) {
-		// 			searchEnd = true
-		// 			foundIntXV = intX
-		// 			foundIntYV = intY
-		// 			intBlockV = block
-		// 		}
-		// 		j++
-		// 	}
-		// }
+			const intX = position.x + x * sfv
+			const intY = position.y - y
+			if (isOOR(intX, intY)) searchEnd = true
+			if (!searchEnd) {
+				const addr = getBlockAddressXY(intX, intY)
+				const block = blockArray[addr.x][addr.y]
+				const state = block.state
+				if (state) {
+					searchEnd = true
+					foundIntXV = intX
+					foundIntYV = intY
+					intBlockV = block
+				}
+				j++
+			}
+		}
 
-		// const vDistance = getDistance(foundIntXV, foundIntYV, position)
+		const vDistance = getDistance(foundIntXV, foundIntYV, position)
 		const hDistance = getDistance(foundIntXH, foundIntYH, position)
 		let foundIntX: number
 		let foundIntY: number
@@ -150,9 +132,9 @@ export const raycast = (
 		// 	foundIntBlock = intBlockH
 		// }
 
-		foundIntX = foundIntXH
-		foundIntY = foundIntYH
-		foundIntBlock = intBlockH
+		foundIntX = foundIntXV
+		foundIntY = foundIntYV
+		foundIntBlock = intBlockV
 		/////////////////////////////////////////////////////////////
 
 		// draw rendered intersects in topView
