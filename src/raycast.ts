@@ -9,11 +9,13 @@ import {
 	topViewLeft,
 	topViewTop,
 	topViewWidth,
-	raycastFloorColor,
 	darkenPower,
-	raycastSkyColor,
-	floorDarkenPower
+	rD,
+	gD,
+	bD,
+	blockBoundaryColor
 } from "."
+import { drawFloorAndSky } from "./drawFloorAndSky"
 import { getBlockAddressXY } from "./getBlockAddress"
 import { getRadians } from "./getRadians"
 import { isOOR } from "./isOOR"
@@ -25,39 +27,11 @@ export const raycast = (
 	blockArray: [Block[]],
 	ctx: CanvasRenderingContext2D
 ) => {
-	// draw linear gradient sky
-	const grdC = ctx.createLinearGradient(0, 0, 0, raycastHeight / 2)
-	grdC.addColorStop(1, raycastSkyColor)
-	grdC.addColorStop(0, "black")
-	ctx.fillStyle = grdC
-	ctx.fillRect(raycastLeft, raycastTop, raycastWidth, raycastHeight / 2)
-
-	// draw linear gradient floor
-	const grdF = ctx.createLinearGradient(
-		0,
-		raycastHeight / 2,
-		0,
-		raycastHeight
-	)
-	grdF.addColorStop(0, "black")
-	grdF.addColorStop(1, raycastFloorColor)
-	ctx.fillStyle = grdF
-	ctx.fillRect(
-		raycastLeft,
-		raycastTop + raycastHeight / 2,
-		raycastWidth,
-		raycastHeight / 2
-	)
-
-	const getCorrectedAngle = (angle: number) => {
-		let corr = angle
-		if (angle < 0) corr = angle + 360
-		return corr
-	}
+	drawFloorAndSky(ctx)
 
 	const yCenter = raycastTop + raycastHeight / 2
 	const angleInc = fieldOfViewAngle / raycastWidth
-	const startAngle = getCorrectedAngle(position.angle - fieldOfViewAngle / 2)
+	const startAngle = limitAngle(position.angle - fieldOfViewAngle / 2)
 
 	const getDistance = (intX: number, intY: number, position: Position) => {
 		const x = intX - position.x
@@ -65,6 +39,8 @@ export const raycast = (
 		return Math.sqrt(x * x + y * y)
 	}
 
+	let prevDistance = 0
+	let prevPrevDistance = 0
 	// for every angle/column, we need the distance to the closest intersect with a solid block
 	for (let column = 0; column < raycastWidth - 1; column++) {
 		const angle = limitAngle(startAngle + angleInc * column)
@@ -195,25 +171,40 @@ export const raycast = (
 
 		// render in the raycast view
 		let distance = getDistance(foundIntX, foundIntY, position)
+
+		let isCorner = false
+		if (prevPrevDistance < prevDistance && distance < prevDistance)
+			isCorner = true
+		if (prevPrevDistance > prevDistance && distance > prevDistance)
+			isCorner = true
+		if (prevDistance - distance) prevPrevDistance = prevDistance
+		prevDistance = distance
+
 		const fullDarkDistance = Math.sqrt(
 			topViewHeight * topViewHeight + topViewWidth * topViewWidth
 		)
-		const f = Math.pow(
+		let f = Math.pow(
 			(fullDarkDistance - distance) / fullDarkDistance,
 			darkenPower
 		)
 
 		ctx.beginPath()
 		const color = blockArray[0][0].color
+		f = isCorner ? f * 1.5 : f
 
 		const r = Number(`0x${color.slice(1, 3)}`)
 		const g = Number(`0x${color.slice(3, 5)}`)
 		const b = Number(`0x${color.slice(5, 7)}`)
-		const ar = (r * f).toFixed(0)
-		const ag = (g * f).toFixed(0)
-		const ab = (b * f).toFixed(0)
 
-		const darkenedColor = `rgb(${ar},${ag},${ab})`
+		const getDistanceColor = (c: number, d: number, f: number) => {
+			return c * f + (d - d * f)
+		}
+
+		const rA = getDistanceColor(r, rD, f)
+		const gA = getDistanceColor(g, gD, f)
+		const bA = getDistanceColor(b, bD, f)
+
+		const darkenedColor = `rgb(${rA},${gA},${bA})`
 
 		ctx.strokeStyle = darkenedColor
 		const lineHeight = Math.min(
