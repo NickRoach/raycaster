@@ -1,4 +1,5 @@
 import {
+	fastFactor,
 	movementSpeed,
 	positionXMax,
 	positionYMax,
@@ -131,29 +132,30 @@ export const move = (
 
 	const xUnits = Math.sin(getRadians(-position.angle))
 	const yUnits = Math.cos(getRadians(-position.angle))
+	const ff = keyPresses.shift ? fastFactor : 1
 
-	if (!keyPresses.shift) {
-		adjustDirection(keyPresses, position)
+	if (!keyPresses.ctrl) {
+		adjustDirection(keyPresses, position, ff)
 	} else {
 		if (keyPresses.left) {
 			const strafeXUnits = Math.sin(getRadians(-position.angle - 90))
 			const strafeYUnits = Math.cos(getRadians(-position.angle - 90))
-			newPosition.x += strafeXUnits * strafeSpeed
-			newPosition.y += strafeYUnits * strafeSpeed
+			newPosition.x += strafeXUnits * strafeSpeed * ff
+			newPosition.y += strafeYUnits * strafeSpeed * ff
 		} else if (keyPresses.right) {
 			const strafeXUnits = Math.sin(getRadians(-position.angle + 90))
 			const strafeYUnits = Math.cos(getRadians(-position.angle + 90))
-			newPosition.x += strafeXUnits * strafeSpeed
-			newPosition.y += strafeYUnits * strafeSpeed
+			newPosition.x += strafeXUnits * strafeSpeed * ff
+			newPosition.y += strafeYUnits * strafeSpeed * ff
 		}
 	}
 
 	if (keyPresses.up) {
-		newPosition.x -= xUnits * movementSpeed
-		newPosition.y -= yUnits * movementSpeed
+		newPosition.x -= xUnits * movementSpeed * ff
+		newPosition.y -= yUnits * movementSpeed * ff
 	} else if (keyPresses.down) {
-		newPosition.x += xUnits * movementSpeed
-		newPosition.y += yUnits * movementSpeed
+		newPosition.x += xUnits * movementSpeed * ff
+		newPosition.y += yUnits * movementSpeed * ff
 	}
 	const limitedPosition = limitPosition(position, newPosition, blockArray)
 	position.x = limitedPosition.x

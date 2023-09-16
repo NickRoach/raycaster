@@ -10,7 +10,7 @@ import { raycast } from "./raycast"
 
 export const backgroundColor = "black"
 export const topViewBackgroundColor = "#555555"
-export const topViewBlockColor = "#660000"
+export const topViewBlockColor = "#777777"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
 export const xSize = 30
@@ -23,7 +23,7 @@ export const topViewLeft = 50
 export const positionXMax = xSize * topViewBlockSize
 export const positionYMax = ySize * topViewBlockSize
 export const topViewBorderWidth = 50
-export const fieldOfViewAngle = 45
+export const fieldOfViewAngle = 60
 export const viewBoundryLineColor = "yellow"
 export const viewBoundryLineLength = 50
 export const characterColor = "red"
@@ -31,22 +31,21 @@ export const raycastLeft = 550
 export const raycastTop = 50
 export const raycastHeight = 800
 export const raycastWidth = 1300
-export const raycastBackgroundColor = "#111111"
-export const raycastFloorColor = "#662222"
-export const raycastCeilingColor = "#666666"
+export const raycastFloorColor = "#330707"
+export const raycastSkyColor = "#151527"
 export const darkenPower = 2.5
 export const floorDarkenPower = 1.5
-
-let lastFrame = 0
-const frameCadence = 30
 // const initialX = topViewWidth / 2 + 1
 // const initialY = topViewHeight / 2 + 1
 const initialX = 123
 const initialY = 192
 const initialAngle = 45
-export const rotationSpeed = 10 / frameCadence
-export const movementSpeed = 10 / frameCadence
-export const strafeSpeed = 10 / frameCadence
+let lastFrame = 0
+const frameCadence = 30
+export const rotationSpeed = 60 / frameCadence
+export const movementSpeed = 100 / frameCadence
+export const strafeSpeed = 100 / frameCadence
+export const fastFactor = 2
 
 const renderLoop = (
 	timeStamp: number,
@@ -59,8 +58,8 @@ const renderLoop = (
 		lastFrame = timeStamp
 		drawTopView(blockArray, ctx, position)
 		raycast(position, blockArray, ctx)
+		move(position, keyPresses, blockArray)
 	}
-	move(position, keyPresses, blockArray)
 
 	window.requestAnimationFrame((timeStamp) =>
 		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
@@ -88,7 +87,8 @@ const initialize = () => {
 		down: false,
 		left: false,
 		right: false,
-		shift: false
+		shift: false,
+		ctrl: false
 	}
 
 	canvas.addEventListener("click", (e) =>

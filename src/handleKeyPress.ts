@@ -16,9 +16,13 @@ export const handleKeyDown = (e: KeyboardEvent, keyPresses: KeyPresses) => {
 			break
 		case "ArrowRight":
 			keyPresses.right = true
+			keyPresses.left = false
 			break
 		case "Shift":
 			keyPresses.shift = true
+			break
+		case "Control":
+			keyPresses.ctrl = true
 			break
 	}
 }
@@ -39,6 +43,9 @@ export const handleKeyUp = (e: KeyboardEvent, keyPresses: KeyPresses) => {
 			break
 		case "Shift":
 			keyPresses.shift = false
+			break
+		case "Control":
+			keyPresses.ctrl = false
 			break
 	}
 }
