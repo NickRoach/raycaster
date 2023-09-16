@@ -34,13 +34,13 @@ export const raycastSkyHorizonColor = "#8485EE"
 export const raycastSkyZenithColor = "#1A3CD0"
 export const blockBoundaryColor = "#444444"
 export const darkenPower = 0.5
-export const initialX = topViewWidth / 2 + 1
-export const initialY = topViewHeight / 2 + 1
+export const initialX = topViewWidth / 2 + 10
+export const initialY = topViewHeight / 2 + 10
 // export const initialAngle = 115
 
 // export const initialX = 365
 // export const initialY = 566
-export const initialAngle = 135
+export const initialAngle = 290
 
 export const frameCadence = 30
 export const rotationSpeed = (5 * frameCadence) / 100

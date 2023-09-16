@@ -29,14 +29,6 @@ export const raycast = (
 	for (let column = 0; column < raycastWidth - 1; column++) {
 		const angle = limitAngle(startAngle + angleInc * column)
 
-		// FOR DEVELOPMENT THESE LINES REPLACE THE TWO ABOVE
-		// for (
-		// 	let column = raycastWidth / 2;
-		// 	column < raycastWidth - 1;
-		// 	column += raycastWidth
-		// ) {
-		// 	const angle = limitAngle(position.angle)
-
 		let intBlockH: Block
 		let intBlockV: Block
 
@@ -77,34 +69,35 @@ export const raycast = (
 			}
 		}
 
-		// vertical intersects
 		// find closest verticalIntersect
-		// WORKS WHEN FACING RIGHT ONLY
+		// works looking either left or right
 
 		// sv is for "switch left". It is 1 when looking left
 		const sl = angle < 359 && angle > 180 ? 1 : 0
-		// sfv is for "sign flip left". It is -1 when looking left
-		const sfv = sl === 1 ? -1 : 1
+		const sr = sl === 0 ? 1 : 0
+		// ssl is for "sign flip left". It is -1 when looking left
+		const ssl = sl === 1 ? -1 : 1
 
 		let foundIntXV: number = 10000
 		let foundIntYV: number = 10000
 		searchEnd = false
-		// horizontal distance to the first vertical intercept
-		const x1v = (topViewWidth - position.x) % topViewBlockSize
+		const x1v =
+			sr * topViewBlockSize - ssl * (position.x % topViewBlockSize)
 
 		let j = 0
 		while (!searchEnd) {
 			// horizontal distance to next x intercept
 			const x = x1v + topViewBlockSize * j
 			// vertical distance to that intercept
-			const y = x / Math.tan(getRadians(360 + angle))
+			const y = x / Math.tan(getRadians(angle))
 
-			const intX = position.x + x * sfv
-			const intY = position.y - y
+			const intX = position.x + x * ssl
+			const intY = position.y - y * ssl
+
 			if (isOOR(intX, intY)) searchEnd = true
 			if (!searchEnd) {
 				const addr = getBlockAddressXY(intX, intY)
-				const block = blockArray[addr.x][addr.y]
+				const block = blockArray[addr.x + ssl * sl][addr.y]
 				const state = block.state
 				if (state) {
 					searchEnd = true
@@ -122,19 +115,16 @@ export const raycast = (
 		let foundIntY: number
 		let foundIntBlock: Block
 
-		// if (vDistance < hDistance) {
-		// 	foundIntX = foundIntXV
-		// 	foundIntY = foundIntYV
-		// 	foundIntBlock = intBlockV
-		// } else {
-		// 	foundIntX = foundIntXH
-		// 	foundIntY = foundIntYH
-		// 	foundIntBlock = intBlockH
-		// }
+		if (vDistance < hDistance) {
+			foundIntX = foundIntXV
+			foundIntY = foundIntYV
+			foundIntBlock = intBlockV
+		} else {
+			foundIntX = foundIntXH
+			foundIntY = foundIntYH
+			foundIntBlock = intBlockH
+		}
 
-		foundIntX = foundIntXV
-		foundIntY = foundIntYV
-		foundIntBlock = intBlockV
 		/////////////////////////////////////////////////////////////
 
 		// draw rendered intersects in topView
