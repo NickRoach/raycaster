@@ -5,7 +5,7 @@ export const topViewBlockColor = "#111111"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
 
-export const topViewBlockSize = 10
+export const topViewBlockSize = 6
 const topViewWidthMax = 450
 const topViewHeightMax = 800
 export const xSize = Math.floor(topViewWidthMax / topViewBlockSize)
@@ -45,7 +45,7 @@ export const initialAngle = 0
 // export const initialAngle = 0
 
 export const frameCadence = 30
-export const rotationSpeed = (5 * frameCadence) / 100
+export const rotationSpeed = (10 * frameCadence) / 100
 export const movementSpeed = (10 * frameCadence) / 100
 export const strafeSpeed = (10 * frameCadence) / 100
 export const fastFactor = 2
