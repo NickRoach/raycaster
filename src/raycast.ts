@@ -4,7 +4,8 @@ import {
 	topViewBlockSize,
 	topViewLeft,
 	topViewTop,
-	topViewWidth
+	topViewWidth,
+	torchColor
 } from "./constants"
 import { drawDot } from "./drawDot"
 import { drawFloorAndSky } from "./drawFloorAndSky"
@@ -34,7 +35,7 @@ export const raycast = (
 		// 	column < raycastWidth - 1;
 		// 	column += raycastWidth
 		// ) {
-		// 	const angle = limitAngle(position.angle)
+		// 	const angle = limitAngle(position.angle - 1)
 
 		let intBlockH: Block
 		let intBlockV: Block
@@ -80,7 +81,7 @@ export const raycast = (
 		// works looking either left or right
 
 		// sv is for "switch left". It is 1 when looking left
-		const sl = angle < 359 && angle > 180 ? 1 : 0
+		const sl = angle < 360 && angle > 180 ? 1 : 0
 		const sr = sl === 0 ? 1 : 0
 		// ssl is for "sign flip left". It is -1 when looking left
 		const ssl = sl === 1 ? -1 : 1
@@ -97,6 +98,8 @@ export const raycast = (
 			const x = x1v + topViewBlockSize * j
 			// vertical distance to that intercept
 			const y = x / Math.tan(getRadians(angle))
+
+			let i = 0
 
 			const intX = position.x + x * ssl
 			const intY = position.y - y * ssl
@@ -138,7 +141,7 @@ export const raycast = (
 		/////////////////////////////////////////////////////////////
 
 		// draw rendered intersects in topView
-		ctx.fillStyle = "red"
+		ctx.fillStyle = torchColor
 		ctx.beginPath()
 		ctx.arc(
 			topViewLeft + foundIntX,

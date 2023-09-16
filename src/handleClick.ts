@@ -6,6 +6,7 @@ import {
 	topViewBlockSize
 } from "./constants"
 import { drawTopView } from "./drawTopView"
+import { getBlockAddress, getBlockAddressXY } from "./getBlockAddress"
 import { Block, Position } from "./types"
 
 export const handleClick = (

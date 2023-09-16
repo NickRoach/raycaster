@@ -1,5 +1,5 @@
 export const backgroundColor = "black"
-export const topViewBackgroundColor = "#555555"
+export const topViewBackgroundColor = "#222222"
 export const topViewBlockColor = "#156A03"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
@@ -20,6 +20,7 @@ export const fieldOfViewAngle = 60
 export const viewBoundryLineColor = "yellow"
 export const viewBoundryLineLength = 50
 export const characterColor = "red"
+export const torchColor = "#CCCCCC"
 export const raycastLeft = 550
 export const raycastTop = 50
 export const raycastHeight = 800
@@ -37,9 +38,9 @@ export const darkenPower = 3
 export const initialX = topViewWidth / 2
 export const initialY = topViewHeight / 2
 export const initialAngle = 0
-// export const initialX = 170
-// export const initialY = 253
-// export const initialAngle = 304
+// export const initialX = 228
+// export const initialY = 400
+// export const initialAngle = 0
 
 export const frameCadence = 30
 export const rotationSpeed = (5 * frameCadence) / 100
