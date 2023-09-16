@@ -15,6 +15,8 @@ import {
 	characterColor,
 	viewBoundryLineLength
 } from "./constants"
+import { drawGridlines } from "./drawGridlines"
+import { drawTopViewBlocks } from "./drawTopViewBlocks"
 import { getRadians } from "./getRadians"
 import { Block, Position } from "./types"
 
@@ -45,47 +47,9 @@ export const drawTopView = (
 	)
 	ctx.closePath()
 
-	// draw blocks
-	for (let x = 0; x < blockArray.length; x++) {
-		for (let y = 0; y < blockArray.length; y++) {
-			if (blockArray[x][y].state) {
-				ctx.fillStyle = blockArray[x][y].color
-				ctx.fillRect(
-					topViewLeft + x * topViewBlockSize,
-					topViewTop + y * topViewBlockSize,
-					topViewBlockSize,
-					topViewBlockSize
-				)
-				ctx.closePath()
-			}
-		}
-	}
+	drawTopViewBlocks(ctx, blockArray)
 
-	// draw gridlines
-	ctx.strokeStyle = topViewGridColor
-	ctx.lineWidth = topViewGridLineWidth
-	// vertical
-	for (let x = 0; x <= blockArray.length; x++) {
-		ctx.beginPath()
-		ctx.moveTo(topViewLeft + x * topViewBlockSize, topViewTop)
-		ctx.lineTo(
-			topViewLeft + x * topViewBlockSize,
-			topViewTop + blockArray[0].length * topViewBlockSize
-		)
-		ctx.stroke()
-		ctx.closePath()
-	}
-	// horizontal
-	for (let y = 0; y <= blockArray[0].length; y++) {
-		ctx.beginPath()
-		ctx.moveTo(topViewLeft, topViewTop + y * topViewBlockSize)
-		ctx.lineTo(
-			topViewLeft + blockArray[0].length * topViewBlockSize,
-			topViewTop + y * topViewBlockSize
-		)
-		ctx.stroke()
-		ctx.closePath()
-	}
+	drawGridlines(ctx, blockArray)
 
 	// draw field of view indicator
 	ctx.strokeStyle = viewBoundryLineColor
