@@ -141,16 +141,18 @@ export const raycast = (
 		/////////////////////////////////////////////////////////////
 
 		// draw rendered intersects in topView
-		ctx.fillStyle = torchColor
+		ctx.strokeStyle = torchColor
 		ctx.beginPath()
-		ctx.arc(
-			topViewLeft + foundIntX,
-			topViewTop + foundIntY,
-			1,
-			0,
-			2 * Math.PI
-		)
-		ctx.fill()
+		ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
+		ctx.lineTo(topViewLeft + foundIntX, topViewTop + foundIntY)
+		// ctx.arc(
+		// 	topViewLeft + foundIntX,
+		// 	topViewTop + foundIntY,
+		// 	1,
+		// 	0,
+		// 	2 * Math.PI
+		// )
+		ctx.stroke()
 		ctx.closePath()
 
 		if (foundIntBlock)

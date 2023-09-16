@@ -1,4 +1,4 @@
-import { topViewBlockColor } from "./constants"
+import { topViewBlockColor, torchLightBlockColor } from "./constants"
 import { Block } from "./types"
 
 export const makeBlockArray = (xSize: number, ySize: number) => {
@@ -10,8 +10,8 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 				// state: false,
 				// state: (x === 12 || x === 25) && y % 2 === 0 ? true : false,
 				// state: x === 23 && y > 50 ? true : false,
-				state: Math.random() > 0.9,
-				color: topViewBlockColor
+				state: Math.random() > 0.8,
+				color: torchLightBlockColor
 			}
 		}
 	}

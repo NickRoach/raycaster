@@ -52,36 +52,36 @@ export const drawTopView = (
 	drawGridlines(ctx, blockArray)
 
 	// draw field of view indicator
-	ctx.strokeStyle = viewBoundryLineColor
-	ctx.beginPath()
-	ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
-	ctx.lineTo(
-		topViewLeft +
-			position.x +
-			viewBoundryLineLength *
-				-Math.sin(getRadians(-position.angle - fieldOfViewAngle / 2)),
-		topViewTop +
-			position.y +
-			viewBoundryLineLength *
-				-Math.cos(getRadians(-position.angle - fieldOfViewAngle / 2))
-	)
-	ctx.stroke()
-	ctx.closePath()
+	// ctx.strokeStyle = viewBoundryLineColor
+	// ctx.beginPath()
+	// ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
+	// ctx.lineTo(
+	// 	topViewLeft +
+	// 		position.x +
+	// 		viewBoundryLineLength *
+	// 			-Math.sin(getRadians(-position.angle - fieldOfViewAngle / 2)),
+	// 	topViewTop +
+	// 		position.y +
+	// 		viewBoundryLineLength *
+	// 			-Math.cos(getRadians(-position.angle - fieldOfViewAngle / 2))
+	// )
+	// ctx.stroke()
+	// ctx.closePath()
 
-	ctx.beginPath()
-	ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
-	ctx.lineTo(
-		topViewLeft +
-			position.x -
-			viewBoundryLineLength *
-				Math.sin(getRadians(-position.angle + fieldOfViewAngle / 2)),
-		topViewTop +
-			position.y -
-			viewBoundryLineLength *
-				Math.cos(getRadians(-position.angle + fieldOfViewAngle / 2))
-	)
-	ctx.stroke()
-	ctx.closePath()
+	// ctx.beginPath()
+	// ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
+	// ctx.lineTo(
+	// 	topViewLeft +
+	// 		position.x -
+	// 		viewBoundryLineLength *
+	// 			Math.sin(getRadians(-position.angle + fieldOfViewAngle / 2)),
+	// 	topViewTop +
+	// 		position.y -
+	// 		viewBoundryLineLength *
+	// 			Math.cos(getRadians(-position.angle + fieldOfViewAngle / 2))
+	// )
+	// ctx.stroke()
+	// ctx.closePath()
 
 	// draw character
 	ctx.fillStyle = characterColor
