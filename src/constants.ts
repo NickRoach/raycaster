@@ -4,7 +4,7 @@ export const topViewBlockColor = "#156A03"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
 
-export const topViewBlockSize = 50
+export const topViewBlockSize = 10
 const topViewWidthMax = 450
 const topViewHeightMax = 800
 export const xSize = Math.floor(topViewWidthMax / topViewBlockSize)
@@ -34,13 +34,9 @@ export const raycastSkyHorizonColor = "#8485EE"
 export const raycastSkyZenithColor = "#1A3CD0"
 export const blockBoundaryColor = "#444444"
 export const darkenPower = 0.5
-export const initialX = topViewWidth / 2 + 10
-export const initialY = topViewHeight / 2 + 10
-// export const initialAngle = 115
-
-// export const initialX = 365
-// export const initialY = 566
-export const initialAngle = 290
+export const initialX = topViewWidth / 2
+export const initialY = topViewHeight / 2
+export const initialAngle = 0
 
 export const frameCadence = 30
 export const rotationSpeed = (5 * frameCadence) / 100
