@@ -29,6 +29,13 @@ export const raycast = (
 	for (let column = 0; column < raycastWidth - 1; column++) {
 		const angle = limitAngle(startAngle + angleInc * column)
 
+		// for (
+		// 	let column = raycastWidth / 2;
+		// 	column < raycastWidth - 1;
+		// 	column += raycastWidth
+		// ) {
+		// 	const angle = limitAngle(position.angle)
+
 		let intBlockH: Block
 		let intBlockV: Block
 
@@ -96,7 +103,10 @@ export const raycast = (
 
 			if (isOOR(intX, intY)) searchEnd = true
 			if (!searchEnd) {
-				const addr = getBlockAddressXY(intX, intY)
+				const addr = getBlockAddressXY(
+					intX + topViewBlockSize / 2,
+					intY
+				)
 				const block = blockArray[addr.x + ssl * sl][addr.y]
 				const state = block.state
 				if (state) {
