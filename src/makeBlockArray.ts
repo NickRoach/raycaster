@@ -10,7 +10,7 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 				// state: false,
 				// state: (x === 12 || x === 25) && y % 2 === 0 ? true : false,
 				// state: x === 23 && y > 50 ? true : false,
-				state: Math.random() > 0.9,
+				state: Math.random() > 0.97,
 				color: torchLightBlockColor
 			}
 		}

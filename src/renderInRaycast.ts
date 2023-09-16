@@ -58,7 +58,7 @@ export const renderInRaycast = (
 	const x = raycastLeft + column + 1
 	ctx.lineWidth = 2
 	ctx.moveTo(x, yCenter + lineHeight / 2)
-	ctx.lineTo(x, yCenter - lineHeight / 2)
+	ctx.lineTo(x, Math.max(yCenter - lineHeight * 5, raycastTop))
 	ctx.stroke()
 	ctx.closePath()
 }
