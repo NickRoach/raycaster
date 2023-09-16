@@ -7,8 +7,7 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 		array[x] = []
 		for (let y = 0; y < ySize; y++) {
 			array[x][y] = {
-				state: Math.random() > 0.99,
-				// state: false,
+				state: false,
 				color: topViewBlockColor
 			}
 		}
