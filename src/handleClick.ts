@@ -1,12 +1,10 @@
 import {
 	topViewLeft,
 	topViewTop,
-	topViewBlockSize,
-	xSize,
-	ySize,
 	topViewWidth,
-	topViewHeight
-} from "."
+	topViewHeight,
+	topViewBlockSize
+} from "./constants"
 import { drawTopView } from "./drawTopView"
 import { Block, Position } from "./types"
 

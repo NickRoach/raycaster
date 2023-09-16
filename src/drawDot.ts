@@ -1,4 +1,4 @@
-import { topViewLeft, topViewTop } from "."
+import { topViewLeft, topViewTop } from "./constants"
 
 export const drawDot = (
 	x: number,

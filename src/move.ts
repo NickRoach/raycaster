@@ -8,7 +8,7 @@ import {
 	topViewWidth,
 	xSize,
 	ySize
-} from "."
+} from "./constants"
 import { adjustDirection } from "./adjustDirection"
 import { getBlockAddress } from "./getBlockAddress"
 import { getRadians } from "./getRadians"

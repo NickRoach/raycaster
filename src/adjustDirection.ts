@@ -1,4 +1,4 @@
-import { rotationSpeed } from "."
+import { rotationSpeed } from "./constants"
 import { limitAngle } from "./limitAngle"
 import { KeyPresses, Position } from "./types"
 

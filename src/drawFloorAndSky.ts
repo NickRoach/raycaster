@@ -1,13 +1,13 @@
 import {
 	raycastHeight,
 	raycastSkyHorizonColor,
+	raycastSkyZenithColor,
 	raycastLeft,
 	raycastTop,
 	raycastWidth,
 	raycastFloorNadirColor,
-	raycastSkyZenithColor,
 	raycastFloorHorizonColor
-} from "."
+} from "./constants"
 
 export const drawFloorAndSky = (ctx: CanvasRenderingContext2D) => {
 	// draw linear gradient sky

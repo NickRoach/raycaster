@@ -1,20 +1,19 @@
 import {
+	bD,
+	darkenPower,
+	fieldOfViewAngle,
+	gD,
+	rD,
+	raycastHeight,
 	raycastLeft,
 	raycastTop,
 	raycastWidth,
-	raycastHeight,
-	fieldOfViewAngle,
-	topViewHeight,
 	topViewBlockSize,
+	topViewHeight,
 	topViewLeft,
 	topViewTop,
-	topViewWidth,
-	darkenPower,
-	rD,
-	gD,
-	bD,
-	blockBoundaryColor
-} from "."
+	topViewWidth
+} from "./constants"
 import { drawFloorAndSky } from "./drawFloorAndSky"
 import { getBlockAddressXY } from "./getBlockAddress"
 import { getRadians } from "./getRadians"
@@ -39,8 +38,6 @@ export const raycast = (
 		return Math.sqrt(x * x + y * y)
 	}
 
-	let prevDistance = 0
-	let prevPrevDistance = 0
 	// for every angle/column, we need the distance to the closest intersect with a solid block
 	for (let column = 0; column < raycastWidth - 1; column++) {
 		const angle = limitAngle(startAngle + angleInc * column)
@@ -172,25 +169,16 @@ export const raycast = (
 		// render in the raycast view
 		let distance = getDistance(foundIntX, foundIntY, position)
 
-		let isCorner = false
-		if (prevPrevDistance < prevDistance && distance < prevDistance)
-			isCorner = true
-		if (prevPrevDistance > prevDistance && distance > prevDistance)
-			isCorner = true
-		if (prevDistance - distance) prevPrevDistance = prevDistance
-		prevDistance = distance
-
 		const fullDarkDistance = Math.sqrt(
 			topViewHeight * topViewHeight + topViewWidth * topViewWidth
 		)
-		let f = Math.pow(
+		const f = Math.pow(
 			(fullDarkDistance - distance) / fullDarkDistance,
 			darkenPower
 		)
 
 		ctx.beginPath()
 		const color = blockArray[0][0].color
-		f = isCorner ? f * 1.5 : f
 
 		const r = Number(`0x${color.slice(1, 3)}`)
 		const g = Number(`0x${color.slice(3, 5)}`)

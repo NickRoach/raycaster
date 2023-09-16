@@ -1,4 +1,4 @@
-import { topViewWidth, xSize, topViewHeight, ySize } from "."
+import { topViewWidth, xSize, topViewHeight, ySize } from "./constants"
 import { Position } from "./types"
 
 export const getBlockAddress = (position: Position) => {

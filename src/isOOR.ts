@@ -1,4 +1,4 @@
-import { topViewHeight, topViewWidth } from "."
+import { topViewHeight, topViewWidth } from "./constants"
 
 // is a given point outside the arena area?
 export const isOOR = (intX: number, intY: number) => {

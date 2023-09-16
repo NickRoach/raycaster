@@ -14,7 +14,7 @@ import {
 	fieldOfViewAngle,
 	characterColor,
 	viewBoundryLineLength
-} from "."
+} from "./constants"
 import { getRadians } from "./getRadians"
 import { Block, Position } from "./types"
 
