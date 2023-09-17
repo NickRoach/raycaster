@@ -10,14 +10,17 @@ export const topViewBlockSize = 6
 export const topViewTop = margin
 export const topViewLeft = margin
 const topViewWidthMax = window.innerWidth / 4
-const topViewHeightMax = window.innerHeight - topViewTop - margin
+const topViewHeightMax = Math.min(
+	window.innerHeight - topViewTop - margin - 1,
+	window.innerWidth / 2
+)
 export const xSize = Math.floor(topViewWidthMax / topViewBlockSize)
 export const ySize = Math.floor(topViewHeightMax / topViewBlockSize)
 export const topViewHeight = topViewBlockSize * ySize
 export const topViewWidth = topViewBlockSize * xSize
 export const raycastLeft = window.innerWidth / 4 + topViewLeft + margin
 export const raycastTop = margin
-export const raycastHeight = window.innerHeight - raycastTop - margin - 1
+export const raycastHeight = topViewHeight
 export const raycastWidth = window.innerWidth - topViewWidth - margin * 3
 
 export const positionXMax = xSize * topViewBlockSize
