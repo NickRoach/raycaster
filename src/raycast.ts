@@ -5,7 +5,8 @@ import {
 	topViewLeft,
 	topViewTop,
 	topViewWidth,
-	torchColor
+	torchColor,
+	ySize
 } from "./constants"
 import { drawDot } from "./drawDot"
 import { drawFloorAndSky } from "./drawFloorAndSky"
@@ -23,11 +24,8 @@ export const raycast = (
 	ctx: CanvasRenderingContext2D
 ) => {
 	drawFloorAndSky(ctx)
-	const angleInc = fieldOfViewAngle / raycastWidth
-	const startAngle = limitAngle(position.angle - fieldOfViewAngle / 2)
-
 	// for every angle/column, we need the distance to the closest intersect with a solid block
-	for (let column = 0; column < raycastWidth - 1; column++) {
+	for (let column = 0; column < raycastWidth; column++) {
 		// column offset from the center of the field of view
 		const columnOffset = column - raycastWidth / 2
 		// number of columns in a half
@@ -45,8 +43,8 @@ export const raycast = (
 		let intBlockV: Block
 
 		// find closest horizontalIntersect
-		let foundIntXH: number = 10000
-		let foundIntYH: number = 10000
+		let foundIntXH: number
+		let foundIntYH: number
 
 		let searchEnd: boolean = false
 
@@ -66,9 +64,16 @@ export const raycast = (
 			const x = y * Math.tan(getRadians(sd * 360 + ssd * angle))
 			const intX = position.x + x
 			const intY = position.y - ssd * y
-			if (isOOR(intX, intY)) searchEnd = true
+			if (isOOR(intX, intY)) {
+				searchEnd = true
+				foundIntXH = intX
+				foundIntYH = intY
+			}
 			if (!searchEnd) {
-				const addr = getBlockAddressXY(intX, intY)
+				const addr = getBlockAddressXY(
+					intX,
+					intY + topViewBlockSize / 2
+				)
 				const block = blockArray[addr.x][addr.y - su]
 				const state = block.state
 				if (state) {
@@ -107,7 +112,11 @@ export const raycast = (
 			const intX = position.x + x * ssl
 			const intY = position.y - y * ssl
 
-			if (isOOR(intX, intY)) searchEnd = true
+			if (isOOR(intX, intY)) {
+				searchEnd = true
+				foundIntXV = intX
+				foundIntYV = intY
+			}
 			if (!searchEnd) {
 				const addr = getBlockAddressXY(
 					intX + topViewBlockSize / 2,
@@ -157,26 +166,23 @@ export const raycast = (
 		ctx.beginPath()
 		ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
 		ctx.lineTo(topViewLeft + foundIntX, topViewTop + foundIntY)
-		// ctx.arc(
-		// 	topViewLeft + foundIntX,
-		// 	topViewTop + foundIntY,
-		// 	1,
-		// 	0,
-		// 	2 * Math.PI
-		// )
 		ctx.stroke()
 		ctx.closePath()
-
-		if (foundIntBlock)
-			renderInRaycast(
-				foundIntX,
-				foundIntY,
-				foundIntBlock,
-				position,
-				angle,
-				column,
-				isEdge,
-				ctx
-			)
+		if (!foundIntBlock)
+			foundIntBlock = {
+				state: false,
+				color: "#000000",
+				transparency: "0"
+			}
+		renderInRaycast(
+			foundIntX,
+			foundIntY,
+			foundIntBlock,
+			position,
+			angle,
+			column,
+			isEdge,
+			ctx
+		)
 	}
 }

@@ -1,6 +1,8 @@
 export type Block = {
 	state: boolean
 	color: string
+	transparency?: string
+	height?: number
 }
 
 export type Position = {

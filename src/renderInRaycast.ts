@@ -53,7 +53,9 @@ export const renderInRaycast = (
 	const gA = getDistanceColor(g, gD, f)
 	const bA = getDistanceColor(b, bD, f)
 
-	const darkenedColor = `rgb(${rA},${gA},${bA})`
+	const darkenedColor = `rgb(${rA},${gA},${bA},${
+		foundIntBlock.transparency || 1
+	})`
 
 	ctx.strokeStyle = darkenedColor
 	const lineHeight = Math.min(20000 / distance, raycastHeight)
@@ -62,7 +64,13 @@ export const renderInRaycast = (
 	const x = raycastLeft + column + 1
 	ctx.lineWidth = 2
 	ctx.moveTo(x, yCenter + lineHeight / 2)
-	ctx.lineTo(x, Math.max(yCenter - lineHeight * 5, raycastTop))
+	ctx.lineTo(
+		x,
+		Math.max(
+			yCenter - lineHeight * 5 * (foundIntBlock.height ?? 1),
+			raycastTop
+		)
+	)
 	ctx.stroke()
 	ctx.closePath()
 }

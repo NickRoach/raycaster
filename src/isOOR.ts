@@ -5,8 +5,8 @@ export const isOOR = (intX: number, intY: number) => {
 	if (
 		intY > topViewHeight - 1 ||
 		intY < 1 ||
-		intX > topViewWidth ||
-		intX < 0
+		intX > topViewWidth - 1 ||
+		intX < 1
 	) {
 		return true
 	} else return false

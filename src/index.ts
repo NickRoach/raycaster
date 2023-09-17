@@ -26,11 +26,15 @@ const renderLoop = (
 	position: Position,
 	keyPresses: KeyPresses
 ) => {
-	if (timeStamp - lastFrame > frameCadence) {
-		lastFrame = timeStamp
-		drawTopView(blockArray, ctx, position)
-		raycast(position, blockArray, ctx)
-		move(position, keyPresses, blockArray)
+	try {
+		if (timeStamp - lastFrame > frameCadence) {
+			lastFrame = timeStamp
+			drawTopView(blockArray, ctx, position)
+			raycast(position, blockArray, ctx)
+			move(position, keyPresses, blockArray)
+		}
+	} catch (e) {
+		console.log(e)
 	}
 
 	window.requestAnimationFrame((timeStamp) =>

@@ -6,6 +6,7 @@ export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 		for (let y = 0; y < blockArray[0].length; y++) {
 			blockArray[x][y].state = true
 			blockArray[x][y].color = Math.random() > 0.5 ? "#38475C" : "#354459"
+			blockArray[x][y].height = 0.1
 		}
 	}
 	// top and bottom
@@ -13,6 +14,7 @@ export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 		for (let x = 1; x < blockArray.length - 1; x++) {
 			blockArray[x][y].state = true
 			blockArray[x][y].color = Math.random() > 0.5 ? "#38475C" : "#354459"
+			blockArray[x][y].height = 0.1
 		}
 	}
 }

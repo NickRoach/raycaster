@@ -6,12 +6,17 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 	for (let x = 0; x < xSize; x++) {
 		array[x] = []
 		for (let y = 0; y < ySize; y++) {
+			console.log(`3${(Math.random() * 9).toFixed(0).padStart(1, "0")}`)
 			array[x][y] = {
 				// state: false,
-				// state: (x === 12 || x === 25) && y % 2 === 0 ? true : false,
-				// state: x === 23 && y > 50 ? true : false,
-				state: Math.random() > 0.97,
-				color: torchLightBlockColor
+				state: Math.random() > 0.98,
+				color: `#7${(Math.random() * 9).toFixed(0).padStart(1, "0")}6${(
+					Math.random() * 9
+				)
+					.toFixed(0)
+					.padStart(1, "0")}5${(Math.random() * 9)
+					.toFixed(0)
+					.padStart(1, "0")}`
 			}
 		}
 	}

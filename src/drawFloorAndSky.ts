@@ -16,15 +16,9 @@ export const drawFloorAndSky = (ctx: CanvasRenderingContext2D) => {
 	grdS.addColorStop(1, raycastSkyHorizonColor)
 	grdS.addColorStop(0, raycastSkyZenithColor)
 	ctx.fillStyle = grdS
-	ctx.fillRect(raycastLeft, raycastTop, raycastWidth, raycastHeight / 2)
+	ctx.fillRect(raycastLeft, raycastTop, raycastWidth + 1, raycastHeight / 2)
 
-	// draw linear gradient floor
-	// const grdF = ctx.createLinearGradient(
-	// 	0,
-	// 	raycastHeight / 2,
-	// 	0,
-	// 	raycastHeight
-	// )
+	// draw radial gradient floor
 	const grdF = ctx.createRadialGradient(
 		raycastLeft + raycastWidth / 2,
 		raycastTop + raycastHeight + 1400,
@@ -33,15 +27,15 @@ export const drawFloorAndSky = (ctx: CanvasRenderingContext2D) => {
 		raycastTop + raycastHeight + 1500,
 		raycastWidth / 2 + 1500
 	)
+
+	// draw linear gradient sky
 	grdF.addColorStop(0, raycastFloorNadirColor)
 	grdF.addColorStop(1, raycastFloorHorizonColor)
-	// grdF.addColorStop(0, "black")
-	// grdF.addColorStop(1, "white")
 	ctx.fillStyle = grdF
 	ctx.fillRect(
 		raycastLeft,
 		raycastTop + raycastHeight / 2,
-		raycastWidth,
+		raycastWidth + 1,
 		raycastHeight / 2
 	)
 }
