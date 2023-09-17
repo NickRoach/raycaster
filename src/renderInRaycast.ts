@@ -10,6 +10,7 @@ import {
 	raycastTop
 } from "./constants"
 import { getDistance } from "./getDistance"
+import { getRadians } from "./getRadians"
 import { Block, Position } from "./types"
 
 export const renderInRaycast = (
@@ -17,11 +18,15 @@ export const renderInRaycast = (
 	foundIntY: number,
 	foundIntBlock: Block,
 	position: Position,
+	angle: number,
 	column: number,
 	ctx: CanvasRenderingContext2D
 ) => {
 	// render in the raycast view
 	let distance = getDistance(foundIntX, foundIntY, position)
+	const theta = getRadians(angle - position.angle - 360)
+	// distortion correction
+	distance = distance * Math.cos(theta)
 
 	const fullDarkDistance = Math.sqrt(
 		topViewHeight * topViewHeight + topViewWidth * topViewWidth
@@ -49,10 +54,7 @@ export const renderInRaycast = (
 	const darkenedColor = `rgb(${rA},${gA},${bA})`
 
 	ctx.strokeStyle = darkenedColor
-	const lineHeight = Math.min(
-		20000 / getDistance(foundIntX, foundIntY, position),
-		raycastHeight
-	)
+	const lineHeight = Math.min(20000 / distance, raycastHeight)
 
 	const yCenter = raycastTop + raycastHeight / 2
 	const x = raycastLeft + column + 1

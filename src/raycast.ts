@@ -11,7 +11,7 @@ import { drawDot } from "./drawDot"
 import { drawFloorAndSky } from "./drawFloorAndSky"
 import { getBlockAddressXY } from "./getBlockAddress"
 import { getDistance } from "./getDistance"
-import { getRadians } from "./getRadians"
+import { getDegrees, getRadians } from "./getRadians"
 import { isOOR } from "./isOOR"
 import { limitAngle } from "./limitAngle"
 import { renderInRaycast } from "./renderInRaycast"
@@ -28,14 +28,18 @@ export const raycast = (
 
 	// for every angle/column, we need the distance to the closest intersect with a solid block
 	for (let column = 0; column < raycastWidth - 1; column++) {
-		const angle = limitAngle(startAngle + angleInc * column)
+		// column offset from the center of the field of view
+		const columnOffset = column - raycastWidth / 2
+		// number of columns in a half
+		const n = raycastWidth / 2
+		// angle of half the field of view
+		const theta = fieldOfViewAngle / 2
+		// we know that for column n
+		const yFactor = n / Math.tan(getRadians(theta))
+		// now we can use that y factor for other columns
+		const angleOffset = getDegrees(Math.atan(columnOffset / yFactor))
 
-		// for (
-		// 	let column = raycastWidth / 2;
-		// 	column < raycastWidth - 1;
-		// 	column += raycastWidth
-		// ) {
-		// 	const angle = limitAngle(position.angle - 1)
+		const angle = limitAngle(position.angle + angleOffset)
 
 		let intBlockH: Block
 		let intBlockV: Block
@@ -161,6 +165,7 @@ export const raycast = (
 				foundIntY,
 				foundIntBlock,
 				position,
+				angle,
 				column,
 				ctx
 			)
