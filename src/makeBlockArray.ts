@@ -6,7 +6,6 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 	for (let x = 0; x < xSize; x++) {
 		array[x] = []
 		for (let y = 0; y < ySize; y++) {
-			console.log(`3${(Math.random() * 9).toFixed(0).padStart(1, "0")}`)
 			array[x][y] = {
 				// state: false,
 				state: Math.random() > 0.98,
