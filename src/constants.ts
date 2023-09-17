@@ -5,23 +5,23 @@ export const topViewBlockColor = "#111111"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
 
-const margin = 5
+export const margin = 5
 export const topViewBlockSize = 6
 export const topViewTop = margin
 export const topViewLeft = margin
 const topViewWidthMax = window.innerWidth / 4
 const topViewHeightMax = Math.min(
 	window.innerHeight - topViewTop - margin - 1,
-	window.innerWidth / 2
+	window.innerWidth / 1.75
 )
 export const xSize = Math.floor(topViewWidthMax / topViewBlockSize)
 export const ySize = Math.floor(topViewHeightMax / topViewBlockSize)
 export const topViewHeight = topViewBlockSize * ySize
 export const topViewWidth = topViewBlockSize * xSize
-export const raycastLeft = window.innerWidth / 4 + topViewLeft + margin
+export const raycastLeft = topViewLeft + topViewWidth + margin
 export const raycastTop = margin
 export const raycastHeight = topViewHeight
-export const raycastWidth = window.innerWidth - topViewWidth - margin * 3
+export const raycastWidth = window.innerWidth - margin - raycastLeft
 
 export const positionXMax = xSize * topViewBlockSize
 export const positionYMax = ySize * topViewBlockSize
