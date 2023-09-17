@@ -20,6 +20,7 @@ export const renderInRaycast = (
 	position: Position,
 	angle: number,
 	column: number,
+	isEdge: boolean,
 	ctx: CanvasRenderingContext2D
 ) => {
 	// render in the raycast view
@@ -31,13 +32,14 @@ export const renderInRaycast = (
 	const fullDarkDistance = Math.sqrt(
 		topViewHeight * topViewHeight + topViewWidth * topViewWidth
 	)
-	const f = Math.pow(
+	let f = Math.pow(
 		(fullDarkDistance - distance) / fullDarkDistance,
 		darkenPower
 	)
 
 	ctx.beginPath()
-	const color = foundIntBlock ? foundIntBlock.color : "red"
+	const color = foundIntBlock.color
+	if (isEdge) f = f / 1.1
 
 	const r = Number(`0x${color.slice(1, 3)}`)
 	const g = Number(`0x${color.slice(3, 5)}`)

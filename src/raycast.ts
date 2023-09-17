@@ -53,13 +53,13 @@ export const raycast = (
 		// works facing both up and down
 		// sd is 1 if facing down. switch down
 		const sd = angle > 90 && angle < 270 ? 1 : 0
-		const su = sd === 1 ? 0 : 1
+		const su = sd === 0 ? 1 : 0
 		// ssd is -1 when facing down. switch sign down
 		const ssd = sd === 1 ? -1 : 1
-
-		searchEnd = false
+		// y value of the first horizontal intercept
 		const y1h =
 			sd * topViewBlockSize + ssd * (position.y % topViewBlockSize)
+
 		let i = 0
 		while (!searchEnd) {
 			const y = y1h + topViewBlockSize * i
@@ -90,20 +90,19 @@ export const raycast = (
 		// ssl is for "sign flip left". It is -1 when looking left
 		const ssl = sl === 1 ? -1 : 1
 
-		let foundIntXV: number = 10000
-		let foundIntYV: number = 10000
-		searchEnd = false
+		let foundIntXV: number
+		let foundIntYV: number
+		// x value of the first vertical intercept
 		const x1v =
 			sr * topViewBlockSize - ssl * (position.x % topViewBlockSize)
 
+		searchEnd = false
 		let j = 0
 		while (!searchEnd) {
 			// horizontal distance to next x intercept
 			const x = x1v + topViewBlockSize * j
 			// vertical distance to that intercept
 			const y = x / Math.tan(getRadians(angle))
-
-			let i = 0
 
 			const intX = position.x + x * ssl
 			const intY = position.y - y * ssl
@@ -142,9 +141,18 @@ export const raycast = (
 			foundIntBlock = intBlockH
 		}
 
+		const isEdge =
+			(foundIntX % topViewBlockSize < 0.1 ||
+				foundIntX % topViewBlockSize > topViewBlockSize - 0.1) &&
+			(foundIntY % topViewBlockSize < 0.1 ||
+				foundIntY % topViewBlockSize > topViewBlockSize - 0.1)
+
+		const foundXfromEdge = foundIntX % topViewBlockSize
+		const foundYfromEdge = foundIntY % topViewBlockSize
+
 		/////////////////////////////////////////////////////////////
 
-		// draw rendered intersects in topView
+		// draw torch light in topView
 		ctx.strokeStyle = torchColor
 		ctx.beginPath()
 		ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
@@ -167,6 +175,7 @@ export const raycast = (
 				position,
 				angle,
 				column,
+				isEdge,
 				ctx
 			)
 	}
