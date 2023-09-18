@@ -15,8 +15,8 @@ in the rendering view with a height corresponding to the distance of that inters
 
 #Try it out:
 
+Use Node version >=14.21.3
+
 `npm i` to install packages
 
 `npm start` to transpile, weback and start live server
-
-Mac and Linux users will likely run into problems with the use of 'concurrently' in the 'npm start' script, but that shouldn't be too hard to work out.
