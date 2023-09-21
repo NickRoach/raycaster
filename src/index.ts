@@ -34,13 +34,11 @@ const renderLoop = (
 ) => {
 	try {
 		if (timeStamp - lastFrame > frameCadence) {
+			console.log("fps:", Math.round(1000 / (timeStamp - lastFrame)))
 			lastFrame = timeStamp
 			drawTopView(blockArray, ctx, position)
-			const millis1 = new Date().getMilliseconds()
 			raycast(position, blockArray, ctx, iCtx, rgb2dArray)
-			const millis2 = new Date().getMilliseconds()
-			console.log(millis2 - millis1)
-			debugger
+
 			move(position, keyPresses, blockArray)
 		}
 	} catch (e) {
