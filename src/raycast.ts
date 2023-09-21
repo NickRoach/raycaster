@@ -16,15 +16,27 @@ import { getDegrees, getRadians } from "./getRadians"
 import { isOOR } from "./isOOR"
 import { limitAngle } from "./limitAngle"
 import { renderInRaycast } from "./renderInRaycast"
-import { Block, Position } from "./types"
+import { Block, Position, RgbaData } from "./types"
 
 export const raycast = (
 	position: Position,
 	blockArray: [Block[]],
-	ctx: CanvasRenderingContext2D
+	ctx: CanvasRenderingContext2D,
+	iCtx: CanvasRenderingContext2D,
+	rgb2dArray: RgbaData
 ) => {
-	drawFloorAndSky(ctx)
+	const verticals = []
+	let intBlockH: Block
+	let intBlockV: Block
+	let foundIntXH: number
+	let foundIntYH: number
+	let foundIntXV: number
+	let foundIntYV: number
+	let searchEnd: boolean = false
+	let distance: number
+
 	// for every angle/column, we need the distance to the closest intersect with a solid block
+
 	for (let column = 0; column < raycastWidth; column++) {
 		// column offset from the center of the field of view
 		const columnOffset = column - raycastWidth / 2
@@ -39,15 +51,7 @@ export const raycast = (
 
 		const angle = limitAngle(position.angle + angleOffset)
 
-		let intBlockH: Block
-		let intBlockV: Block
-
 		// find closest horizontalIntersect
-		let foundIntXH: number
-		let foundIntYH: number
-
-		let searchEnd: boolean = false
-
 		// works facing both up and down
 		// sd is 1 if facing down. switch down
 		const sd = angle > 90 && angle < 270 ? 1 : 0
@@ -59,6 +63,7 @@ export const raycast = (
 			sd * topViewBlockSize + ssd * (position.y % topViewBlockSize)
 
 		let i = 0
+		searchEnd = false
 		while (!searchEnd) {
 			const y = y1h + topViewBlockSize * i
 			const x = y * Math.tan(getRadians(sd * 360 + ssd * angle))
@@ -95,8 +100,6 @@ export const raycast = (
 		// ssl is for "sign flip left". It is -1 when looking left
 		const ssl = sl === 1 ? -1 : 1
 
-		let foundIntXV: number
-		let foundIntYV: number
 		// x value of the first vertical intercept
 		const x1v =
 			sr * topViewBlockSize - ssl * (position.x % topViewBlockSize)
@@ -144,10 +147,12 @@ export const raycast = (
 			foundIntX = foundIntXV
 			foundIntY = foundIntYV
 			foundIntBlock = intBlockV
+			distance = vDistance
 		} else {
 			foundIntX = foundIntXH
 			foundIntY = foundIntYH
 			foundIntBlock = intBlockH
+			distance = hDistance
 		}
 
 		const isEdge =
@@ -155,9 +160,6 @@ export const raycast = (
 				foundIntX % topViewBlockSize > topViewBlockSize - 0.1) &&
 			(foundIntY % topViewBlockSize < 0.1 ||
 				foundIntY % topViewBlockSize > topViewBlockSize - 0.1)
-
-		const foundXfromEdge = foundIntX % topViewBlockSize
-		const foundYfromEdge = foundIntY % topViewBlockSize
 
 		/////////////////////////////////////////////////////////////
 
@@ -174,15 +176,14 @@ export const raycast = (
 				color: "#000000",
 				transparency: "0"
 			}
-		renderInRaycast(
-			foundIntX,
-			foundIntY,
+
+		verticals.push({
 			foundIntBlock,
-			position,
-			angle,
+			distance,
 			column,
 			isEdge,
-			ctx
-		)
+			angleFromCenter: getRadians(angle - position.angle - 360)
+		})
 	}
+	renderInRaycast(verticals, ctx, rgb2dArray)
 }

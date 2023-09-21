@@ -19,3 +19,16 @@ export type KeyPresses = {
 	shift: boolean
 	ctrl: boolean
 }
+
+export type RgbaData = {
+	data: number[][][]
+	colorSpace: string
+}
+
+export type Vertical = {
+	foundIntBlock: Block
+	distance: number
+	column: number
+	isEdge: boolean
+	angleFromCenter: number
+}

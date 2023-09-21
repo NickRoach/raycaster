@@ -2,75 +2,73 @@ import {
 	topViewHeight,
 	topViewWidth,
 	darkenPower,
-	rD,
-	gD,
-	bD,
 	raycastHeight,
 	raycastLeft,
-	raycastTop
+	raycastTop,
+	distanceColor
 } from "./constants"
-import { getDistance } from "./getDistance"
-import { getRadians } from "./getRadians"
-import { Block, Position } from "./types"
+import { drawVerticalLine } from "./drawVerticalLine"
+import { hexToRgba } from "./hexToRgba"
+import { toImageData } from "./imageConverterFuncs"
+import { RgbaData } from "./types"
 
 export const renderInRaycast = (
-	foundIntX: number,
-	foundIntY: number,
-	foundIntBlock: Block,
-	position: Position,
-	angle: number,
-	column: number,
-	isEdge: boolean,
-	ctx: CanvasRenderingContext2D
+	verticals,
+	ctx: CanvasRenderingContext2D,
+	rgb2dArrayOriginal: RgbaData
 ) => {
-	// render in the raycast view
-	let distance = getDistance(foundIntX, foundIntY, position)
-	const theta = getRadians(angle - position.angle - 360)
-	// distortion correction
-	distance = distance * Math.cos(theta)
-
-	const fullDarkDistance = Math.sqrt(
-		topViewHeight * topViewHeight + topViewWidth * topViewWidth
-	)
-	let f = Math.pow(
-		(fullDarkDistance - distance) / fullDarkDistance,
-		darkenPower
-	)
-
-	ctx.beginPath()
-	const color = foundIntBlock.color
-	if (isEdge) f = f / 1.1
-
-	const r = Number(`0x${color.slice(1, 3)}`)
-	const g = Number(`0x${color.slice(3, 5)}`)
-	const b = Number(`0x${color.slice(5, 7)}`)
-
-	const getDistanceColor = (c: number, d: number, f: number) => {
-		return c * f + (d - d * f)
+	const rgb2dArray = {
+		data: rgb2dArrayOriginal.data.map((x) => x.map((y) => y.map((z) => z))),
+		colorSpace: "rgba"
 	}
 
-	const rA = getDistanceColor(r, rD, f)
-	const gA = getDistanceColor(g, gD, f)
-	const bA = getDistanceColor(b, bD, f)
+	for (let vert of verticals) {
+		// render in the raycast view
+		const { distance, foundIntBlock, isEdge, column } = vert
+		// distortion correction
+		const adjustedDistance = distance * Math.cos(vert.angleFromCenter)
 
-	const darkenedColor = `rgb(${rA},${gA},${bA},${
-		foundIntBlock.transparency || 1
-	})`
-
-	ctx.strokeStyle = darkenedColor
-	const lineHeight = Math.min((raycastHeight * 20) / distance, raycastHeight)
-
-	const yCenter = raycastTop + raycastHeight / 2
-	const x = raycastLeft + column + 1
-	ctx.lineWidth = 2
-	ctx.moveTo(x, yCenter + lineHeight / 2)
-	ctx.lineTo(
-		x,
-		Math.max(
-			yCenter - lineHeight * 5 * (foundIntBlock.height ?? 1),
-			raycastTop
+		const fullDarkDistance = Math.min(
+			Math.sqrt(
+				topViewHeight * topViewHeight + topViewWidth * topViewWidth
+			),
+			2000
 		)
-	)
-	ctx.stroke()
+		let f = Math.pow(
+			(fullDarkDistance - adjustedDistance) / fullDarkDistance,
+			darkenPower
+		)
+
+		const color = foundIntBlock.color
+		if (isEdge) f = f / 1.1
+
+		const rgb = hexToRgba(color)
+		const distanceColorRgb = hexToRgba(distanceColor)
+
+		const getDistanceColor = (c: number, d: number, f: number) => {
+			return c * f + (d - d * f)
+		}
+
+		const rA = getDistanceColor(rgb.r, distanceColorRgb.r, f)
+		const gA = getDistanceColor(rgb.g, distanceColorRgb.g, f)
+		const bA = getDistanceColor(rgb.b, distanceColorRgb.b, f)
+
+		const darkCol = [rA, gA, bA, foundIntBlock.transparency || 1]
+		const lineHeight = 10000 / adjustedDistance
+		const yCenter = Math.round(raycastTop + raycastHeight / 2)
+
+		const height = foundIntBlock.height * 200 || lineHeight * 5
+		drawVerticalLine(
+			rgb2dArray,
+			column,
+			Math.max(Math.round(yCenter - height), 0),
+			Math.min(Math.round(yCenter + lineHeight / 2), raycastHeight),
+			[darkCol[0], darkCol[1], darkCol[2], 1 * 255]
+		)
+	}
+
+	const imageData = toImageData(rgb2dArray, ctx)
+	ctx.beginPath()
+	ctx.putImageData(imageData, raycastLeft, raycastTop)
 	ctx.closePath()
 }
