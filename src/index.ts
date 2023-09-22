@@ -16,6 +16,7 @@ import {
 	initialY,
 	initialAngle
 } from "./constants"
+import { handleTouchEnd, handleTouchMove } from "./handleTouch"
 
 let lastFrame = 0
 
@@ -67,11 +68,21 @@ const initialize = () => {
 		ctrl: false
 	}
 
+	const touches = {
+		lastTouch: null
+	}
+
 	canvas.addEventListener("click", (e) =>
 		handleClick(e, blockArray, ctx, position)
 	)
 	window.addEventListener("keydown", (e) => handleKeyDown(e, keyPresses))
 	window.addEventListener("keyup", (e) => handleKeyUp(e, keyPresses))
+	window.addEventListener("touchmove", (e) =>
+		handleTouchMove(e, keyPresses, touches)
+	)
+	window.addEventListener("touchend", (e) =>
+		handleTouchEnd(e, keyPresses, touches)
+	)
 	fillOuterWallBlocks(blockArray)
 	window.requestAnimationFrame((timeStamp) =>
 		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
