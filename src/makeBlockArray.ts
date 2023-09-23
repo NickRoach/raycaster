@@ -1,4 +1,3 @@
-import { topViewBlockColor, torchLightBlockColor } from "./constants"
 import { Block } from "./types"
 
 export const makeBlockArray = (xSize: number, ySize: number) => {

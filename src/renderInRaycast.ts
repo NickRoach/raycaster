@@ -58,7 +58,7 @@ export const renderInRaycast = (
 	})`
 
 	ctx.strokeStyle = darkenedColor
-	const lineHeight = Math.min((raycastHeight * 10) / distance, raycastHeight)
+	const lineHeight = Math.min((raycastHeight * 5) / distance, raycastHeight)
 
 	const yCenter = raycastTop + raycastHeight / 2
 	const x = raycastLeft + column + 1

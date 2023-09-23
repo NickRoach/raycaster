@@ -77,10 +77,10 @@ const initialize = () => {
 	)
 	window.addEventListener("keydown", (e) => handleKeyDown(e, keyPresses))
 	window.addEventListener("keyup", (e) => handleKeyUp(e, keyPresses))
-	window.addEventListener("touchmove", (e) =>
+	canvas.addEventListener("touchmove", (e) =>
 		handleTouchMove(e, keyPresses, touches)
 	)
-	window.addEventListener("touchend", (e) =>
+	canvas.addEventListener("touchend", (e) =>
 		handleTouchEnd(e, keyPresses, touches)
 	)
 	fillOuterWallBlocks(blockArray)
