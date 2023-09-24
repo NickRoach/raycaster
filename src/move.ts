@@ -130,6 +130,12 @@ export const move = (
 		y: position.y
 	}
 
+	if (keyPresses.w) {
+		position.height += 0.1
+	} else if (keyPresses.s) {
+		position.height = Math.max(0.5, position.height - 0.1)
+	}
+
 	const xUnits = Math.sin(getRadians(-position.angle))
 	const yUnits = Math.cos(getRadians(-position.angle))
 	const ff = keyPresses.shift ? fastFactor : 1

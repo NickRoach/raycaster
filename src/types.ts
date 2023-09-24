@@ -19,4 +19,6 @@ export type KeyPresses = {
 	right: boolean
 	shift: boolean
 	ctrl: boolean
+	w: boolean
+	s: boolean
 }

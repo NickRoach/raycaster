@@ -66,7 +66,9 @@ const initialize = () => {
 		left: false,
 		right: false,
 		shift: false,
-		ctrl: false
+		ctrl: false,
+		w: false,
+		s: false
 	}
 
 	const touches = {
