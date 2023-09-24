@@ -14,7 +14,9 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 					.toFixed(0)
 					.padStart(1, "0")}5${(Math.random() * 9)
 					.toFixed(0)
-					.padStart(1, "0")}`
+					.padStart(1, "0")}`,
+				transparency: 1,
+				height: 5
 			}
 		}
 	}

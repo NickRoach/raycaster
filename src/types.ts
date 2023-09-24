@@ -1,7 +1,7 @@
 export type Block = {
 	state: boolean
 	color: string
-	transparency?: string
+	transparency?: number
 	height?: number
 }
 
@@ -9,6 +9,7 @@ export type Position = {
 	x: number
 	y: number
 	angle: number
+	height: number
 }
 
 export type KeyPresses = {

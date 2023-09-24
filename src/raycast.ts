@@ -156,9 +156,6 @@ export const raycast = (
 			(foundIntY % topViewBlockSize < 0.1 ||
 				foundIntY % topViewBlockSize > topViewBlockSize - 0.1)
 
-		const foundXfromEdge = foundIntX % topViewBlockSize
-		const foundYfromEdge = foundIntY % topViewBlockSize
-
 		/////////////////////////////////////////////////////////////
 
 		// draw torch light in topView
@@ -172,7 +169,7 @@ export const raycast = (
 			foundIntBlock = {
 				state: false,
 				color: "#000000",
-				transparency: "0"
+				transparency: 0
 			}
 		renderInRaycast(
 			foundIntX,

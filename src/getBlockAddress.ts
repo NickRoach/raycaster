@@ -12,6 +12,7 @@ export const getBlockAddressXY = (x: number, y: number) => {
 	return getBlockAddress({
 		x,
 		y,
-		angle: 0
+		angle: 0,
+		height: 0
 	})
 }

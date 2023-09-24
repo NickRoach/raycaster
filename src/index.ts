@@ -54,10 +54,11 @@ const initialize = () => {
 	body.appendChild(canvas)
 	window.onresize = () => resizeCanvas(canvas)
 	const blockArray = makeBlockArray(xSize, ySize)
-	const position = {
+	const position: Position = {
 		x: initialX,
 		y: initialY,
-		angle: initialAngle
+		angle: initialAngle,
+		height: 1
 	}
 	const keyPresses: KeyPresses = {
 		up: false,

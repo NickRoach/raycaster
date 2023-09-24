@@ -7,7 +7,10 @@ import {
 	bD,
 	raycastHeight,
 	raycastLeft,
-	raycastTop
+	raycastTop,
+	fieldOfViewAngle,
+	raycastWidth,
+	topViewBlockSize
 } from "./constants"
 import { getDistance } from "./getDistance"
 import { getRadians } from "./getRadians"
@@ -54,23 +57,24 @@ export const renderInRaycast = (
 	const bA = getDistanceColor(b, bD, f)
 
 	const darkenedColor = `rgb(${rA},${gA},${bA},${
-		foundIntBlock.transparency || 1
+		foundIntBlock.transparency.toString() || "1"
 	})`
 
 	ctx.strokeStyle = darkenedColor
-	const lineHeight = Math.min((raycastHeight * 5) / distance, raycastHeight)
+	const distanceToFillFov =
+		topViewBlockSize / 2 / Math.tan(getRadians(fieldOfViewAngle / 2))
+	const blockUnitHeight = (distanceToFillFov / distance) * raycastWidth
+	const lineHeight = blockUnitHeight * (foundIntBlock.height ?? 1)
 
 	const yCenter = raycastTop + raycastHeight / 2
 	const x = raycastLeft + column + 1
+	const lineBottom = yCenter + blockUnitHeight * position.height
+	const lineTop = lineBottom - lineHeight
 	ctx.lineWidth = 2
-	ctx.moveTo(x, yCenter + lineHeight / 2)
-	ctx.lineTo(
-		x,
-		Math.max(
-			yCenter - lineHeight * 5 * (foundIntBlock.height ?? 1),
-			raycastTop
-		)
-	)
+	// bottom
+	ctx.moveTo(x, Math.min(lineBottom, raycastTop + raycastHeight))
+	// top
+	ctx.lineTo(x, Math.max(lineTop, raycastTop))
 	ctx.stroke()
 	ctx.closePath()
 }
