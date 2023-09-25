@@ -45,20 +45,26 @@ const limitPosition = (
 		newBlockAddress.y = currentBlockAddress.y
 	}
 
-	const newBlock: boolean =
+	const isNewBlock: boolean =
 		newBlockAddress.x != currentBlockAddress.x ||
 		newBlockAddress.y != currentBlockAddress.y
 
 	// if not moving into a new block
-	if (!newBlock) return newPosition
+	if (!isNewBlock) return newPosition
 
 	// if we're trying to move diagonally between blocks directly across a corner
 	const diagonal =
 		newBlockAddress.x != currentBlockAddress.x &&
 		newBlockAddress.y != currentBlockAddress.y
 
+	const newBlock = blockArray[newBlockAddress.x][newBlockAddress.y]
+
+	const getIsBlockClear = (block: Block) => {
+		return !block.state || block.height < position.height
+	}
+
 	// if moving into new block but not diagonally: if that block is clear, go ahead
-	if (!blockArray[newBlockAddress.x][newBlockAddress.y].state && !diagonal) {
+	if (getIsBlockClear(newBlock) && !diagonal) {
 		return newPosition
 	} else {
 		// if it isn't clear or is a diagonal
@@ -73,8 +79,9 @@ const limitPosition = (
 			// if we're moving up and the block above is clear
 			if (
 				yDirection === false &&
-				!blockArray[currentBlockAddress.x][currentBlockAddress.y - 1]
-					.state
+				getIsBlockClear(
+					blockArray[currentBlockAddress.x][currentBlockAddress.y - 1]
+				)
 			) {
 				return true
 			}
@@ -82,8 +89,9 @@ const limitPosition = (
 			// if we're moving down and the block below is clear
 			if (
 				yDirection &&
-				!blockArray[currentBlockAddress.x][currentBlockAddress.y + 1]
-					.state
+				getIsBlockClear(
+					blockArray[currentBlockAddress.x][currentBlockAddress.y + 1]
+				)
 			)
 				return true
 			return false
@@ -96,16 +104,18 @@ const limitPosition = (
 			// if we're moving right and the block to the right is clear
 			if (
 				xDirection &&
-				!blockArray[currentBlockAddress.x + 1][currentBlockAddress.y]
-					.state
+				getIsBlockClear(
+					blockArray[currentBlockAddress.x + 1][currentBlockAddress.y]
+				)
 			) {
 				return true
 			}
 			// if we're moving left and the block left is clear
 			if (
 				xDirection === false &&
-				!blockArray[currentBlockAddress.x - 1][currentBlockAddress.y]
-					.state
+				getIsBlockClear(
+					blockArray[currentBlockAddress.x - 1][currentBlockAddress.y]
+				)
 			) {
 				return true
 			}
