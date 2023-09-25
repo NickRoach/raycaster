@@ -69,11 +69,13 @@ export const renderInRaycast = (
 		const lineBottom = yCenter + blockUnitHeight * position.height
 		const lineTop = lineBottom - lineHeight
 		ctx.lineWidth = 2
-		// bottom
-		ctx.moveTo(xPos, Math.min(lineBottom, raycastTop + raycastHeight))
-		// top
-		ctx.lineTo(xPos, Math.max(lineTop, raycastTop))
-		ctx.stroke()
-		ctx.closePath()
+		if (lineTop < raycastTop + raycastHeight) {
+			// bottom
+			ctx.moveTo(xPos, Math.min(lineBottom, raycastTop + raycastHeight))
+			// top
+			ctx.lineTo(xPos, Math.max(lineTop, raycastTop))
+			ctx.stroke()
+			ctx.closePath()
+		}
 	}
 }
