@@ -24,10 +24,9 @@ export type KeyPresses = {
 }
 
 export type Vertical = {
-	x: number
-	y: number
 	block: Block
 	column: number
+	intAngle: number
 	angle: number
 	distance: number
 	isEdge: boolean

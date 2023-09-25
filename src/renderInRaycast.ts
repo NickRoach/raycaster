@@ -10,7 +10,9 @@ import {
 	raycastTop,
 	fieldOfViewAngle,
 	raycastWidth,
-	topViewBlockSize
+	topViewBlockSize,
+	shadePower,
+	edgeDarken
 } from "./constants"
 import { getRadians } from "./getRadians"
 import { Position, Vertical } from "./types"
@@ -20,13 +22,23 @@ export const renderInRaycast = (
 	position: Position,
 	ctx: CanvasRenderingContext2D
 ) => {
+	// this mixes two colors in the ratio given by f. c is color 1, d is color 2
+	const getDistanceColor = (c: number, d: number, f: number) => {
+		return c * f + (d - d * f)
+	}
+
+	// this darkens the color by the factor given by f
+	const getShadedColor = (c: number, shadeF: number) => {
+		return c * shadeF
+	}
+
 	const sortedVerts = verticals.sort((a, b) => {
 		return b.distance - a.distance
 	})
 	// render in the raycast view
 	for (let vert of sortedVerts) {
-		const { x, y, block, column, angle, distance, isEdge } = vert
-		const theta = getRadians(vert.angle - position.angle - 360)
+		const { block, column, angle, intAngle, distance, isEdge } = vert
+		const theta = getRadians(angle - position.angle - 360)
 		// distortion correction
 		const distanceCor = distance * Math.cos(theta)
 
@@ -40,19 +52,21 @@ export const renderInRaycast = (
 
 		ctx.beginPath()
 		const color = block.color
-		if (isEdge) f = f / 1.1
+		if (isEdge) f = f / edgeDarken
 
 		const r = Number(`0x${color.slice(1, 3)}`)
 		const g = Number(`0x${color.slice(3, 5)}`)
 		const b = Number(`0x${color.slice(5, 7)}`)
 
-		const getDistanceColor = (c: number, d: number, f: number) => {
-			return c * f + (d - d * f)
-		}
+		const rDist = getDistanceColor(r, rD, f)
+		const gDist = getDistanceColor(g, gD, f)
+		const bDist = getDistanceColor(b, bD, f)
 
-		const rA = getDistanceColor(r, rD, f)
-		const gA = getDistanceColor(g, gD, f)
-		const bA = getDistanceColor(b, bD, f)
+		const shadeF = Math.pow(Math.sin(getRadians(vert.intAngle)), shadePower)
+
+		const rA = getShadedColor(rDist, shadeF)
+		const gA = getShadedColor(gDist, shadeF)
+		const bA = getShadedColor(bDist, shadeF)
 
 		const darkenedColor = `rgb(${rA},${gA},${bA},${
 			block.transparency.toString() || "1"

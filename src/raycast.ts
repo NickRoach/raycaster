@@ -33,6 +33,28 @@ export const raycast = (
 		)
 	}
 
+	const getIntAngleX = (angle: number, sl: number, sd: number) => {
+		//up, left
+		if (sd === 0 && sl === 1) return 360 - angle
+		// up, right
+		if (sd === 0 && sl === 0) return angle
+		// down, left
+		if (sd === 1 && sl === 1) return angle - 180
+		// down, right
+		if (sd === 1 && sl === 0) return 180 - angle
+	}
+
+	const getIntAngleY = (angle: number, sl: number, sd: number) => {
+		// up, left
+		if (sd === 0 && sl === 1) return angle - 270
+		// up, right
+		if (sd === 0 && sl === 0) return 90 - angle
+		// down, left
+		if (sd === 1 && sl === 1) return 270 - angle
+		// down, right
+		if (sd === 1 && sl === 0) return angle - 90
+	}
+
 	drawFloorAndSky(ctx)
 	let verticals: Vertical[] = []
 	// for every angle/column, we need the distance to the closest intersect with a solid block
@@ -50,6 +72,18 @@ export const raycast = (
 
 		const angle = limitAngle(position.angle + angleOffset)
 
+		// sd is 1 if facing down. switch down
+		const sd = angle > 90 && angle < 270 ? 1 : 0
+		const su = sd === 0 ? 1 : 0
+		// ssd is -1 when facing down. switch sign down
+		const ssd = sd === 1 ? -1 : 1
+
+		// sv is for "switch left". It is 1 when looking left
+		const sl = angle < 360 && angle > 180 ? 1 : 0
+		const sr = sl === 0 ? 1 : 0
+		// ssl is for "sign flip left". It is -1 when looking left
+		const ssl = sl === 1 ? -1 : 1
+
 		// find closest horizontalIntersect
 		let searchEnd: boolean = false
 		let firstIntFound: boolean = false
@@ -58,11 +92,7 @@ export const raycast = (
 		let foundIntYH: number
 
 		// works facing both up and down
-		// sd is 1 if facing down. switch down
-		const sd = angle > 90 && angle < 270 ? 1 : 0
-		const su = sd === 0 ? 1 : 0
-		// ssd is -1 when facing down. switch sign down
-		const ssd = sd === 1 ? -1 : 1
+
 		// y value of the first horizontal intercept
 		const y1h =
 			sd * topViewBlockSize + ssd * (position.y % topViewBlockSize)
@@ -89,11 +119,10 @@ export const raycast = (
 				const state = block.state
 				if (state) {
 					verticals.push({
-						x: intX,
-						y: intY,
 						block,
 						column,
 						angle,
+						intAngle: getIntAngleY(angle, sl, sd),
 						isEdge: isEdge(intX, intY),
 						distance: getDistance(intX, intY, position)
 					})
@@ -109,12 +138,6 @@ export const raycast = (
 
 		// find closest verticalIntersect
 		// works looking either left or right
-
-		// sv is for "switch left". It is 1 when looking left
-		const sl = angle < 360 && angle > 180 ? 1 : 0
-		const sr = sl === 0 ? 1 : 0
-		// ssl is for "sign flip left". It is -1 when looking left
-		const ssl = sl === 1 ? -1 : 1
 
 		let foundIntXV: number
 		let foundIntYV: number
@@ -151,11 +174,10 @@ export const raycast = (
 				const state = block.state
 				if (state) {
 					verticals.push({
-						x: intX,
-						y: intY,
 						block,
 						column,
 						angle,
+						intAngle: getIntAngleX(angle, sl, sd),
 						isEdge: isEdge(intX, intY),
 						distance: getDistance(intX, intY, position)
 					})
@@ -171,7 +193,7 @@ export const raycast = (
 
 		/////////////////////////////////////////////////////////////
 
-		// draw torch light in topView
+		// draw torch light ray in topView
 		let foundIntX: number
 		let foundIntY: number
 
