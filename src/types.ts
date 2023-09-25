@@ -3,6 +3,7 @@ export type Block = {
 	color: string
 	transparency?: number
 	height?: number
+	base?: number
 }
 
 export type Position = {

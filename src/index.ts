@@ -54,6 +54,7 @@ const initialize = () => {
 	body.appendChild(canvas)
 	window.onresize = () => resizeCanvas(canvas)
 	const blockArray = makeBlockArray(xSize, ySize)
+	fillOuterWallBlocks(blockArray)
 	const position: Position = {
 		x: initialX,
 		y: initialY,
@@ -86,7 +87,6 @@ const initialize = () => {
 	canvas.addEventListener("touchend", (e) =>
 		handleTouchEnd(e, keyPresses, touches)
 	)
-	fillOuterWallBlocks(blockArray)
 	window.requestAnimationFrame((timeStamp) =>
 		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
 	)

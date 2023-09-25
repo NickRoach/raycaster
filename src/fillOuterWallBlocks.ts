@@ -17,6 +17,8 @@ export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 			blockArray[x][y].state = getStateProbability()
 			blockArray[x][y].color = getColor()
 			blockArray[x][y].height = wallBlockHeight
+			blockArray[x][y].base = 0
+			blockArray[x][y].transparency = 1
 		}
 	}
 	// top and bottom
@@ -25,6 +27,8 @@ export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 			blockArray[x][y].state = getStateProbability()
 			blockArray[x][y].color = getColor()
 			blockArray[x][y].height = wallBlockHeight
+			blockArray[x][y].base = 0
+			blockArray[x][y].transparency = 1
 		}
 	}
 }

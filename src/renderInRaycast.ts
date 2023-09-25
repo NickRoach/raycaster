@@ -77,10 +77,10 @@ export const renderInRaycast = (
 			topViewBlockSize / 2 / Math.tan(getRadians(fieldOfViewAngle / 2))
 		const blockUnitHeight = (distanceToFillFov / distanceCor) * raycastWidth
 		const lineHeight = blockUnitHeight * (block.height ?? 1)
-
 		const yCenter = raycastTop + raycastHeight / 2
 		const xPos = raycastLeft + column + 1
-		const lineBottom = yCenter + blockUnitHeight * position.height
+		const lineBottom =
+			yCenter + blockUnitHeight * (position.height - block.base ?? 0)
 		const lineTop = lineBottom - lineHeight
 		ctx.lineWidth = 2
 		if (lineTop < raycastTop + raycastHeight) {
