@@ -22,3 +22,13 @@ export type KeyPresses = {
 	w: boolean
 	s: boolean
 }
+
+export type Vertical = {
+	x: number
+	y: number
+	block: Block
+	column: number
+	angle: number
+	distance: number
+	isEdge: boolean
+}

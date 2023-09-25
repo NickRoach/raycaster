@@ -2,6 +2,7 @@ import {
 	fieldOfViewAngle,
 	raycastWidth,
 	topViewBlockSize,
+	topViewHeight,
 	topViewLeft,
 	topViewTop,
 	topViewWidth,
@@ -16,14 +17,24 @@ import { getDegrees, getRadians } from "./getRadians"
 import { isOOR } from "./isOOR"
 import { limitAngle } from "./limitAngle"
 import { renderInRaycast } from "./renderInRaycast"
-import { Block, Position } from "./types"
+import { Block, Position, Vertical } from "./types"
 
 export const raycast = (
 	position: Position,
 	blockArray: [Block[]],
 	ctx: CanvasRenderingContext2D
 ) => {
+	const isEdge = (x: number, y: number) => {
+		return (
+			(x % topViewBlockSize < 0.1 ||
+				x % topViewBlockSize > topViewBlockSize - 0.1) &&
+			(y % topViewBlockSize < 0.1 ||
+				y % topViewBlockSize > topViewBlockSize - 0.1)
+		)
+	}
+
 	drawFloorAndSky(ctx)
+	let verticals: Vertical[] = []
 	// for every angle/column, we need the distance to the closest intersect with a solid block
 	for (let column = 0; column < raycastWidth; column++) {
 		// column offset from the center of the field of view
@@ -39,14 +50,12 @@ export const raycast = (
 
 		const angle = limitAngle(position.angle + angleOffset)
 
-		let intBlockH: Block
-		let intBlockV: Block
-
 		// find closest horizontalIntersect
+		let searchEnd: boolean = false
+		let firstIntFound: boolean = false
+
 		let foundIntXH: number
 		let foundIntYH: number
-
-		let searchEnd: boolean = false
 
 		// works facing both up and down
 		// sd is 1 if facing down. switch down
@@ -66,8 +75,10 @@ export const raycast = (
 			const intY = position.y - ssd * y
 			if (isOOR(intX, intY)) {
 				searchEnd = true
-				foundIntXH = intX
-				foundIntYH = intY
+				if (!firstIntFound) {
+					foundIntXH = intX
+					foundIntYH = intY
+				}
 			}
 			if (!searchEnd) {
 				const addr = getBlockAddressXY(
@@ -77,10 +88,20 @@ export const raycast = (
 				const block = blockArray[addr.x][addr.y - su]
 				const state = block.state
 				if (state) {
-					searchEnd = true
-					foundIntXH = intX
-					foundIntYH = intY
-					intBlockH = block
+					verticals.push({
+						x: intX,
+						y: intY,
+						block,
+						column,
+						angle,
+						isEdge: isEdge(intX, intY),
+						distance: getDistance(intX, intY, position)
+					})
+					if (!firstIntFound) {
+						firstIntFound = true
+						foundIntXH = intX
+						foundIntYH = intY
+					}
 				}
 				i++
 			}
@@ -97,11 +118,13 @@ export const raycast = (
 
 		let foundIntXV: number
 		let foundIntYV: number
+
 		// x value of the first vertical intercept
 		const x1v =
 			sr * topViewBlockSize - ssl * (position.x % topViewBlockSize)
 
 		searchEnd = false
+		firstIntFound = false
 		let j = 0
 		while (!searchEnd) {
 			// horizontal distance to next x intercept
@@ -114,8 +137,10 @@ export const raycast = (
 
 			if (isOOR(intX, intY)) {
 				searchEnd = true
-				foundIntXV = intX
-				foundIntYV = intY
+				if (!firstIntFound) {
+					foundIntXV = intX
+					foundIntYV = intY
+				}
 			}
 			if (!searchEnd) {
 				const addr = getBlockAddressXY(
@@ -125,61 +150,48 @@ export const raycast = (
 				const block = blockArray[addr.x + ssl * sl][addr.y]
 				const state = block.state
 				if (state) {
-					searchEnd = true
-					foundIntXV = intX
-					foundIntYV = intY
-					intBlockV = block
+					verticals.push({
+						x: intX,
+						y: intY,
+						block,
+						column,
+						angle,
+						isEdge: isEdge(intX, intY),
+						distance: getDistance(intX, intY, position)
+					})
+					if (!firstIntFound) {
+						firstIntFound = true
+						foundIntXV = intX
+						foundIntYV = intY
+					}
 				}
 				j++
 			}
 		}
 
-		const vDistance = getDistance(foundIntXV, foundIntYV, position)
-		const hDistance = getDistance(foundIntXH, foundIntYH, position)
-		let foundIntX: number
-		let foundIntY: number
-		let foundIntBlock: Block
-
-		if (vDistance < hDistance) {
-			foundIntX = foundIntXV
-			foundIntY = foundIntYV
-			foundIntBlock = intBlockV
-		} else {
-			foundIntX = foundIntXH
-			foundIntY = foundIntYH
-			foundIntBlock = intBlockH
-		}
-
-		const isEdge =
-			(foundIntX % topViewBlockSize < 0.1 ||
-				foundIntX % topViewBlockSize > topViewBlockSize - 0.1) &&
-			(foundIntY % topViewBlockSize < 0.1 ||
-				foundIntY % topViewBlockSize > topViewBlockSize - 0.1)
-
 		/////////////////////////////////////////////////////////////
 
 		// draw torch light in topView
+		let foundIntX: number
+		let foundIntY: number
+
+		const hDistance = getDistance(foundIntXH, foundIntYH, position)
+		const vDistance = getDistance(foundIntXV, foundIntYV, position)
+
+		if (hDistance < vDistance) {
+			foundIntX = foundIntXH
+			foundIntY = foundIntYH
+		} else {
+			foundIntX = foundIntXV
+			foundIntY = foundIntYV
+		}
+
 		ctx.strokeStyle = torchColor
 		ctx.beginPath()
 		ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
 		ctx.lineTo(topViewLeft + foundIntX, topViewTop + foundIntY)
 		ctx.stroke()
 		ctx.closePath()
-		if (!foundIntBlock)
-			foundIntBlock = {
-				state: false,
-				color: "#000000",
-				transparency: 0
-			}
-		renderInRaycast(
-			foundIntX,
-			foundIntY,
-			foundIntBlock,
-			position,
-			angle,
-			column,
-			isEdge,
-			ctx
-		)
 	}
+	renderInRaycast(verticals, position, ctx)
 }

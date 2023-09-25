@@ -16,7 +16,7 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 					.toFixed(0)
 					.padStart(1, "0")}`,
 				transparency: 1,
-				height: 5
+				height: Math.max(Math.random() * 10, 1)
 			}
 		}
 	}
