@@ -60,7 +60,11 @@ const limitPosition = (
 	const newBlock = blockArray[newBlockAddress.x][newBlockAddress.y]
 
 	const getIsBlockClear = (block: Block) => {
-		return !block.state || block.height < position.height
+		return (
+			!block.state ||
+			block.height + block.base < position.height ||
+			block.base > position.height
+		)
 	}
 
 	// if moving into new block but not diagonally: if that block is clear, go ahead
