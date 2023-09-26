@@ -163,14 +163,24 @@ export const renderInRaycast = (
 					faceCorners.push({ x: calcColumn, y: vertBottom })
 				}
 			}
-			ctx.beginPath()
-			ctx.fillStyle = block.color
-			ctx.moveTo(faceCorners[0].x, faceCorners[0].y)
-			ctx.lineTo(faceCorners[1].x, faceCorners[1].y)
-			ctx.lineTo(faceCorners[2].x, faceCorners[2].y)
-			ctx.lineTo(faceCorners[3].x, faceCorners[3].y)
-			ctx.fill()
-			ctx.closePath()
+			const doRender = faceCorners.filter(
+				(corner) =>
+					corner.x > raycastLeft &&
+					corner.x < raycastLeft + raycastWidth &&
+					corner.y < raycastTop + raycastHeight - 1 &&
+					corner.y > raycastTop
+			)
+
+			if (doRender.length === 4) {
+				ctx.beginPath()
+				ctx.fillStyle = block.color
+				ctx.moveTo(faceCorners[0].x, faceCorners[0].y)
+				ctx.lineTo(faceCorners[1].x, faceCorners[1].y)
+				ctx.lineTo(faceCorners[2].x, faceCorners[2].y)
+				ctx.lineTo(faceCorners[3].x, faceCorners[3].y)
+				ctx.fill()
+				ctx.closePath()
+			}
 		}
 	} // end of for loop
 	// debugger
