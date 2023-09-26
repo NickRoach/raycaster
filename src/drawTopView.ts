@@ -29,10 +29,10 @@ export const drawTopView = (
 	ctx.beginPath()
 	// clear the topView display
 	ctx.fillRect(
-		topViewLeft - topViewBorderWidth,
-		topViewTop - topViewBorderWidth,
-		topViewBlockSize * xSize + topViewBorderWidth * 2,
-		topViewBlockSize * ySize + topViewBorderWidth * 2
+		topViewLeft,
+		topViewTop,
+		topViewBlockSize * xSize,
+		topViewBlockSize * ySize
 	)
 	ctx.closePath()
 

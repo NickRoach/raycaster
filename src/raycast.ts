@@ -17,7 +17,7 @@ import { getDegrees, getRadians } from "./getRadians"
 import { isOOR } from "./isOOR"
 import { limitAngle } from "./limitAngle"
 import { renderInRaycast } from "./renderInRaycast"
-import { Block, Position, Vertical } from "./types"
+import { Block, Position, Ray, Vertical } from "./types"
 
 export const raycast = (
 	position: Position,
@@ -59,6 +59,7 @@ export const raycast = (
 
 	drawFloorAndSky(ctx)
 	let verticals: Vertical[] = []
+	let rays: Ray[] = []
 
 	// number of columns in a half
 	const n = raycastWidth / 2
@@ -230,12 +231,8 @@ export const raycast = (
 			foundIntY = foundIntYV
 		}
 
-		ctx.strokeStyle = torchColor
-		ctx.beginPath()
-		ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
-		ctx.lineTo(topViewLeft + foundIntX, topViewTop + foundIntY)
-		ctx.stroke()
-		ctx.closePath()
+		rays.push({ x: foundIntX, y: foundIntY })
 	}
 	renderInRaycast(verticals, position, yFactor, ctx)
+	return rays
 }

@@ -2,7 +2,7 @@ import { fillOuterWallBlocks } from "./fillOuterWallBlocks"
 import { move } from "./move"
 import { makeBlockArray } from "./makeBlockArray"
 import { resizeCanvas } from "./resizeCanvas"
-import { Block, KeyPresses, Position } from "./types"
+import { Block, KeyPresses, Position, Ray } from "./types"
 import { drawTopView } from "./drawTopView"
 import { handleClick } from "./handleClick"
 import { handleKeyDown, handleKeyUp } from "./handleKeyPress"
@@ -15,7 +15,14 @@ import {
 	initialX,
 	initialY,
 	initialAngle,
-	initialHeight
+	initialHeight,
+	raycastLeft,
+	raycastTop,
+	raycastWidth,
+	raycastHeight,
+	topViewLeft,
+	topViewTop,
+	torchColor
 } from "./constants"
 import { handleTouchEnd, handleTouchMove } from "./handleTouch"
 
@@ -26,13 +33,48 @@ const renderLoop = (
 	blockArray: [Block[]],
 	ctx: CanvasRenderingContext2D,
 	position: Position,
-	keyPresses: KeyPresses
+	keyPresses: KeyPresses,
+	canvas
 ) => {
+	const clipRaycast = () => {
+		ctx.beginPath()
+		ctx.fillStyle = backgroundColor
+		ctx.fillRect(0, 0, raycastLeft, canvas.height)
+		ctx.fillRect(0, 0, canvas.width, raycastTop)
+		ctx.fillRect(
+			0,
+			raycastTop + raycastHeight,
+			canvas.width,
+			canvas.height - raycastTop - raycastHeight
+		)
+		ctx.fillRect(
+			raycastLeft + raycastWidth,
+			0,
+			canvas.width - raycastLeft - raycastWidth,
+			canvas.height
+		)
+		ctx.closePath()
+	}
+
+	const drawRaysInTopView = (rays: Ray[]) => {
+		ctx.strokeStyle = torchColor
+		for (const ray of rays) {
+			ctx.beginPath()
+			ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
+			ctx.lineTo(topViewLeft + ray.x, topViewTop + ray.y)
+			ctx.stroke()
+			ctx.closePath()
+		}
+	}
+
 	try {
 		if (timeStamp - lastFrame > frameCadence) {
 			lastFrame = timeStamp
+
+			const rays = raycast(position, blockArray, ctx)
+			clipRaycast()
 			drawTopView(blockArray, ctx, position)
-			raycast(position, blockArray, ctx)
+			drawRaysInTopView(rays)
 			move(position, keyPresses, blockArray)
 		}
 	} catch (e) {
@@ -40,7 +82,7 @@ const renderLoop = (
 	}
 
 	window.requestAnimationFrame((timeStamp) =>
-		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
+		renderLoop(timeStamp, blockArray, ctx, position, keyPresses, canvas)
 	)
 }
 
@@ -89,7 +131,7 @@ const initialize = () => {
 		handleTouchEnd(e, keyPresses, touches)
 	)
 	window.requestAnimationFrame((timeStamp) =>
-		renderLoop(timeStamp, blockArray, ctx, position, keyPresses)
+		renderLoop(timeStamp, blockArray, ctx, position, keyPresses, canvas)
 	)
 }
 

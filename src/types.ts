@@ -41,3 +41,8 @@ export type Vertical = {
 export type RenderedBlock = {
 	[key: string]: boolean
 }
+
+export type Ray = {
+	x: number
+	y: number
+}
