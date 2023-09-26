@@ -47,8 +47,8 @@ export const edgeDarken = 1.05
 export const initialX = topViewWidth / 2
 export const initialY = topViewHeight / 2
 export const initialAngle = 0
-export const initialHeight = 5
 export const maxHeight = 30
+export const initialHeight = maxHeight / 2
 
 export const frameCadence = 30
 export const rotationSpeed = (10 * frameCadence) / 100

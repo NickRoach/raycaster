@@ -127,6 +127,11 @@ export const raycast = (
 							x: addr.x,
 							y: addr.y - su
 						},
+						blockDistance: getDistance(
+							addr.x * topViewBlockSize,
+							(addr.y - su) * topViewBlockSize,
+							position
+						),
 						block,
 						column,
 						angle,
@@ -187,6 +192,11 @@ export const raycast = (
 							y: addr.y
 						},
 						block,
+						blockDistance: getDistance(
+							(addr.x + ssl * sl) * topViewBlockSize,
+							addr.y * topViewBlockSize,
+							position
+						),
 						column,
 						angle,
 						intAngle: getIntAngleX(angle, sl, sd),

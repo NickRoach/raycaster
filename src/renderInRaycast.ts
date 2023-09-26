@@ -27,8 +27,6 @@ export const renderInRaycast = (
 	yFactor: number,
 	ctx: CanvasRenderingContext2D
 ) => {
-	// ctx.rect(raycastLeft, raycastTop, raycastWidth, raycastHeight)
-	// ctx.clip()
 	// this mixes two colors in the ratio given by f. c is color 1, d is color 2
 	const getDistanceColor = (c: number, d: number, f: number) => {
 		return c * f + (d - d * f)
@@ -44,7 +42,7 @@ export const renderInRaycast = (
 		topViewBlockSize / 2 / Math.tan(getRadians(fieldOfViewAngle / 2))
 
 	const sortedVerts = verticals.sort((a, b) => {
-		return b.distance - a.distance
+		return b.blockDistance - a.blockDistance
 	})
 
 	// keep a list of the blocks for which a top or bottom has already been rendered

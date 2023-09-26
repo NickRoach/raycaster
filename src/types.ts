@@ -30,6 +30,7 @@ export type Vertical = {
 		y: number
 	}
 	block: Block
+	blockDistance: number
 	column: number
 	intAngle: number
 	angle: number
