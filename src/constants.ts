@@ -6,7 +6,7 @@ export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
 
 export const margin = 5
-export const topViewBlockSize = 40
+export const topViewBlockSize = 10
 export const topViewTop = margin
 export const topViewLeft = margin
 const topViewWidthMax = window.innerWidth / 4
@@ -46,7 +46,7 @@ export const shadePower = 0.3
 export const edgeDarken = 1.05
 export const initialX = topViewWidth / 2
 export const initialY = topViewHeight / 2
-export const initialAngle = 0
+export const initialAngle = 90
 export const initialHeight = 3
 
 export const frameCadence = 30

@@ -27,6 +27,8 @@ export const renderInRaycast = (
 	yFactor: number,
 	ctx: CanvasRenderingContext2D
 ) => {
+	// ctx.rect(raycastLeft, raycastTop, raycastWidth, raycastHeight)
+	// ctx.clip()
 	// this mixes two colors in the ratio given by f. c is color 1, d is color 2
 	const getDistanceColor = (c: number, d: number, f: number) => {
 		return c * f + (d - d * f)
@@ -117,19 +119,23 @@ export const renderInRaycast = (
 			topsAndBottoms[key] = true
 			const vertices = getVertices(address)
 			let faceCorners = []
-			// for the second vertex, hopefully the back one
 			for (let i = 0; i < vertices.length; i++) {
 				const v = vertices[i]
 
-				// these work only while looking north
 				const xOffset = v.x - position.x
 				const yOffset = position.y - v.y
+				// these work only while looking north
 
 				// angle between zero and the vertex
 				const alpha = getDegrees(Math.atan(xOffset / yOffset))
 
+				// necessary while looking south
+				const corrector = v.y > position.y ? 1 : 0
+
 				// angle from the center of the field of view to the vertex. It corresponds to the column
-				const vertTheta = getRadians(alpha - position.angle)
+				const vertTheta = getRadians(
+					alpha - position.angle + 180 * corrector
+				)
 
 				const calcColumn =
 					raycastLeft +
@@ -137,24 +143,25 @@ export const renderInRaycast = (
 						yFactor * Math.tan(vertTheta) + raycastWidth / 2
 					) +
 					1
+
 				const vertDistance = Math.sqrt(
 					xOffset * xOffset + yOffset * yOffset
 				)
-				// console.log(angle)
-				// debugger
 
 				const vertDistanceCor = vertDistance * Math.cos(vertTheta)
-				// console.log(vertDistanceCor, distanceCor)
 
 				const blockUnitHeight =
 					(distanceToFillFov / vertDistanceCor) * raycastWidth
-				const vertHeight = blockUnitHeight * (block.height ?? 1)
+				const vertHeight = blockUnitHeight * block.height
 				const vertBottom =
-					yCenter +
-					blockUnitHeight * (position.height - block.base ?? 0)
+					yCenter + blockUnitHeight * (position.height - block.base)
 				const vertTop = vertBottom - vertHeight
 
-				faceCorners.push({ x: calcColumn, y: vertTop })
+				if (renderTop) {
+					faceCorners.push({ x: calcColumn, y: vertTop })
+				} else {
+					faceCorners.push({ x: calcColumn, y: vertBottom })
+				}
 			}
 			ctx.beginPath()
 			ctx.fillStyle = block.color
@@ -166,4 +173,5 @@ export const renderInRaycast = (
 			ctx.closePath()
 		}
 	} // end of for loop
+	// debugger
 }
