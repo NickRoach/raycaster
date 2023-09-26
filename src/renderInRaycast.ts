@@ -174,7 +174,7 @@ export const renderInRaycast = (
 				}
 			}
 
-			if (!(cornersBelow > 0 && cornersBelow > 0)) {
+			if (!(cornersBelow > 0 && cornersAbove > 0)) {
 				ctx.beginPath()
 				ctx.fillStyle = block.color
 				ctx.moveTo(faceCorners[0].x, faceCorners[0].y)
