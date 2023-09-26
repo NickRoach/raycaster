@@ -27,11 +27,11 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 				state: Math.random() > 0.9,
 				// state: false,
 				color: makeColor(),
-				// transparency: Math.random(),
-				transparency: 1,
-				// height: Math.random() * 10 + 1,
-				height: 1,
-				base: Math.random() * maxHeight - 1
+				transparency: Math.random() * 0.5 + 0.5,
+				// transparency: 1,
+				height: Math.random() * 5 + 1,
+				// height: 1,
+				base: Math.random() * maxHeight - 6
 				// base: 0
 			}
 		}

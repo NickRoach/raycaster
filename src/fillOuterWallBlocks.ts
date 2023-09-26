@@ -2,7 +2,8 @@ import { Block } from "./types"
 
 export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 	const getStateProbability = () => {
-		return Math.random() > 0.2
+		// return Math.random() > 0.2
+		return true
 	}
 
 	const getColor = () => {
