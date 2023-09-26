@@ -1,5 +1,6 @@
 import {
 	fastFactor,
+	maxHeight,
 	movementSpeed,
 	positionXMax,
 	positionYMax,
@@ -145,9 +146,9 @@ export const move = (
 	}
 
 	if (keyPresses.w) {
-		position.height += 0.1
+		position.height = Math.min(maxHeight, position.height + 0.1)
 	} else if (keyPresses.s) {
-		position.height = Math.max(0.5, position.height - 0.1)
+		position.height = Math.max(0, position.height - 0.1)
 	}
 
 	const xUnits = Math.sin(getRadians(-position.angle))

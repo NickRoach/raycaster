@@ -1,3 +1,4 @@
+import { maxHeight } from "./constants"
 import { Block } from "./types"
 
 const makeColor = () => {
@@ -23,14 +24,14 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 		array[x] = []
 		for (let y = 0; y < ySize; y++) {
 			array[x][y] = {
-				state: Math.random() > 0.98,
+				state: Math.random() > 0.9,
 				// state: false,
 				color: makeColor(),
-				// transparency: Math.random() * 0.5 + 0.5,
+				// transparency: Math.random(),
 				transparency: 1,
 				// height: Math.random() * 10 + 1,
 				height: 1,
-				base: Math.random() > 0.7 ? Math.random() * 5 : 0
+				base: Math.random() * maxHeight - 1
 				// base: 0
 			}
 		}
