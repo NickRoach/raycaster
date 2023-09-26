@@ -1,19 +1,15 @@
 import {
 	fastFactor,
 	maxHeight,
+	minHeight,
 	movementSpeed,
 	positionXMax,
 	positionYMax,
-	strafeSpeed,
-	topViewHeight,
-	topViewWidth,
-	xSize,
-	ySize
+	strafeSpeed
 } from "./constants"
 import { adjustDirection } from "./adjustDirection"
 import { getBlockAddress } from "./getBlockAddress"
 import { getRadians } from "./getRadians"
-import { limitAngle } from "./limitAngle"
 import { Block, KeyPresses, Position } from "./types"
 
 const limitPosition = (
@@ -148,7 +144,7 @@ export const move = (
 	if (keyPresses.w) {
 		position.height = Math.min(maxHeight, position.height + 0.1)
 	} else if (keyPresses.s) {
-		position.height = Math.max(0, position.height - 0.1)
+		position.height = Math.max(minHeight, position.height - 0.1)
 	}
 
 	const xUnits = Math.sin(getRadians(-position.angle))

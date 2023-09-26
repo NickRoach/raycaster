@@ -48,6 +48,7 @@ export const initialX = topViewWidth / 2
 export const initialY = topViewHeight / 2
 export const initialAngle = 0
 export const maxHeight = 30
+export const minHeight = 0
 export const initialHeight = maxHeight / 2
 
 export const frameCadence = 30

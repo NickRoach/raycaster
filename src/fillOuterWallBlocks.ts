@@ -1,3 +1,4 @@
+import { maxHeight } from "./constants"
 import { Block } from "./types"
 
 export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
@@ -10,7 +11,7 @@ export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 		return Math.random() > 0.5 ? "#38475C" : "#354459"
 	}
 
-	const wallBlockHeight = 1.2
+	const wallBlockHeight = 1
 
 	//sides
 	for (let x = 0; x < blockArray.length; x += blockArray.length - 1) {
@@ -18,7 +19,7 @@ export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 			blockArray[x][y].state = getStateProbability()
 			blockArray[x][y].color = getColor()
 			blockArray[x][y].height = wallBlockHeight
-			blockArray[x][y].base = 0
+			blockArray[x][y].base = maxHeight / 2 - wallBlockHeight / 2
 			blockArray[x][y].transparency = 1
 		}
 	}
@@ -28,7 +29,7 @@ export const fillOuterWallBlocks = (blockArray: [Block[]]) => {
 			blockArray[x][y].state = getStateProbability()
 			blockArray[x][y].color = getColor()
 			blockArray[x][y].height = wallBlockHeight
-			blockArray[x][y].base = 0
+			blockArray[x][y].base = maxHeight / 2 - wallBlockHeight / 2
 			blockArray[x][y].transparency = 1
 		}
 	}
