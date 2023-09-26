@@ -18,7 +18,6 @@ const makeColor = () => {
 // }
 
 export const makeBlockArray = (xSize: number, ySize: number) => {
-	console.log(makeColor())
 	let array: [Block[]] = [[]]
 	for (let x = 0; x < xSize; x++) {
 		array[x] = []
@@ -26,9 +25,12 @@ export const makeBlockArray = (xSize: number, ySize: number) => {
 			array[x][y] = {
 				state: Math.random() > 0.98,
 				color: makeColor(),
-				transparency: Math.random() * 0.5 + 0.5,
-				height: Math.random() * 10 + 1,
-				base: Math.random() > 0.7 ? Math.random() * 5 : 0
+				// transparency: Math.random() * 0.5 + 0.5,
+				transparency: 1,
+				// height: Math.random() * 10 + 1,
+				height: 2,
+				// base: Math.random() > 0.7 ? Math.random() * 5 : 0
+				base: 0
 			}
 		}
 	}

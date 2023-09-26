@@ -14,7 +14,8 @@ import {
 	ySize,
 	initialX,
 	initialY,
-	initialAngle
+	initialAngle,
+	initialHeight
 } from "./constants"
 import { handleTouchEnd, handleTouchMove } from "./handleTouch"
 
@@ -59,7 +60,7 @@ const initialize = () => {
 		x: initialX,
 		y: initialY,
 		angle: initialAngle,
-		height: 1
+		height: initialHeight
 	}
 	const keyPresses: KeyPresses = {
 		up: false,

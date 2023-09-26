@@ -25,10 +25,18 @@ export type KeyPresses = {
 }
 
 export type Vertical = {
+	address: {
+		x: number
+		y: number
+	}
 	block: Block
 	column: number
 	intAngle: number
 	angle: number
 	distance: number
 	isEdge: boolean
+}
+
+export type RenderedBlock = {
+	[key: string]: boolean
 }

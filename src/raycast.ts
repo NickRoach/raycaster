@@ -33,6 +33,7 @@ export const raycast = (
 		)
 	}
 
+	// the angle the intercept makes to the surface: for shading
 	const getIntAngleX = (angle: number, sl: number, sd: number) => {
 		//up, left
 		if (sd === 0 && sl === 1) return 360 - angle
@@ -44,6 +45,7 @@ export const raycast = (
 		if (sd === 1 && sl === 0) return 180 - angle
 	}
 
+	// the angle the intercept makes to the surface: for shading
 	const getIntAngleY = (angle: number, sl: number, sd: number) => {
 		// up, left
 		if (sd === 0 && sl === 1) return angle - 270
@@ -57,16 +59,18 @@ export const raycast = (
 
 	drawFloorAndSky(ctx)
 	let verticals: Vertical[] = []
+
+	// number of columns in a half
+	const n = raycastWidth / 2
+	// angle of half the field of view
+	const theta = fieldOfViewAngle / 2
+	// we know that for the first and last column, the y distance is:
+	const yFactor = n / Math.tan(getRadians(theta))
+
 	// for every angle/column, we need the distance to the closest intersect with a solid block
 	for (let column = 0; column < raycastWidth; column++) {
 		// column offset from the center of the field of view
 		const columnOffset = column - raycastWidth / 2
-		// number of columns in a half
-		const n = raycastWidth / 2
-		// angle of half the field of view
-		const theta = fieldOfViewAngle / 2
-		// we know that for column n
-		const yFactor = n / Math.tan(getRadians(theta))
 		// now we can use that y factor for other columns
 		const angleOffset = getDegrees(Math.atan(columnOffset / yFactor))
 
@@ -119,6 +123,10 @@ export const raycast = (
 				const state = block.state
 				if (state) {
 					verticals.push({
+						address: {
+							x: addr.x,
+							y: addr.y - su
+						},
 						block,
 						column,
 						angle,
@@ -174,6 +182,10 @@ export const raycast = (
 				const state = block.state
 				if (state) {
 					verticals.push({
+						address: {
+							x: addr.x + ssl * sl,
+							y: addr.y
+						},
 						block,
 						column,
 						angle,
@@ -215,5 +227,5 @@ export const raycast = (
 		ctx.stroke()
 		ctx.closePath()
 	}
-	renderInRaycast(verticals, position, ctx)
+	renderInRaycast(verticals, position, yFactor, ctx)
 }
