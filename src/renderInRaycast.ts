@@ -157,32 +157,45 @@ export const renderInRaycast = (
 
 				if (renderTop) {
 					faceCorners.push({ x: calcColumn, y: vertTop })
-				} else {
+				} else if (renderBottom) {
 					faceCorners.push({ x: calcColumn, y: vertBottom })
 				}
 			}
 
-			// this part fixes a bug where the top of a block is rendered when the player passes over the top of it
-			let cornersAbove = 0
-			let cornersBelow = 0
-			for (const corner of faceCorners) {
-				if (corner.y > raycastTop + raycastHeight - 1) {
-					cornersAbove++
+			if (faceCorners.length === 4) {
+				// this part fixes a bug where the top of a block is rendered badly when the player passes over the top of it
+				let cornersAbove = 0
+				let cornersBelow = 0
+				let cornersLeft = 0
+				let cornersRight = 0
+				for (const corner of faceCorners) {
+					if (corner.y > raycastTop + raycastHeight - 1) {
+						cornersAbove++
+					}
+					if (corner.y < raycastTop + 1) {
+						cornersBelow++
+					}
+					if (corner.x < raycastLeft + 1) {
+						cornersLeft++
+					}
+					if (corner.x > raycastLeft + raycastWidth - 1) {
+						cornersRight++
+					}
 				}
-				if (corner.y < raycastTop + 1) {
-					cornersBelow++
-				}
-			}
 
-			if (!(cornersBelow > 0 && cornersAbove > 0)) {
-				ctx.beginPath()
-				ctx.fillStyle = block.color
-				ctx.moveTo(faceCorners[0].x, faceCorners[0].y)
-				for (let i = 1; i < faceCorners.length; i++) {
-					ctx.lineTo(faceCorners[i].x, faceCorners[i].y)
+				if (
+					!(cornersBelow > 0 && cornersAbove > 0) &&
+					!(cornersLeft > 0 && cornersRight > 0)
+				) {
+					ctx.beginPath()
+					ctx.fillStyle = block.color
+					ctx.moveTo(faceCorners[0].x, faceCorners[0].y)
+					for (let i = 1; i < faceCorners.length; i++) {
+						ctx.lineTo(faceCorners[i].x, faceCorners[i].y)
+					}
+					ctx.fill()
+					ctx.closePath()
 				}
-				ctx.fill()
-				ctx.closePath()
 			}
 		}
 	} // end of for loop
