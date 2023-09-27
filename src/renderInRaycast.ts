@@ -187,8 +187,10 @@ export const renderInRaycast = (
 					!(cornersBelow > 0 && cornersAbove > 0) &&
 					!(cornersLeft > 0 && cornersRight > 0)
 				) {
+					ctx.fillStyle = `rgb(${rDist},${gDist},${bDist},${
+						block.transparency.toString() || "1"
+					})`
 					ctx.beginPath()
-					ctx.fillStyle = block.color
 					ctx.moveTo(faceCorners[0].x, faceCorners[0].y)
 					for (let i = 1; i < faceCorners.length; i++) {
 						ctx.lineTo(faceCorners[i].x, faceCorners[i].y)

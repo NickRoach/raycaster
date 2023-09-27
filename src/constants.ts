@@ -1,6 +1,5 @@
 export const backgroundColor = "black"
 export const topViewBackgroundColor = "#131313"
-// export const topViewBlockColor = "#156A03"
 export const topViewBlockColor = "#111111"
 export const topViewGridColor = "#111111"
 export const topViewGridLineWidth = 1
@@ -43,7 +42,7 @@ export const raycastSkyZenithColor = "#000E36"
 export const blockBoundaryColor = "#444444"
 export const darkenPower = 3
 export const shadePower = 0.3
-export const edgeDarken = 1.05
+export const edgeDarken = 1
 export const initialX = topViewWidth / 2
 export const initialY = topViewHeight / 2
 export const initialAngle = 0
