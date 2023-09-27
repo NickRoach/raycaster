@@ -2,21 +2,12 @@ import { maxHeight } from "./constants"
 import { Block } from "./types"
 
 const makeColor = () => {
-	return `#${(Math.random() * 99).toFixed(0).padStart(2, "0")}${(
-		Math.random() * 99
-	)
-		.toFixed(0)
-		.padStart(2, "0")}${(Math.random() * 99).toFixed(0).padStart(2, "0")}`
+	const getColor = () =>
+		Math.round(Math.random() * 255)
+			.toString(16)
+			.padStart(2, "0")
+	return `#${getColor()}${getColor()}${getColor()}`
 }
-
-// this is the old color generator
-// const makeColor = () => {
-// 	return `#7${(Math.random() * 9).toFixed(0).padStart(1, "0")}6${(
-// 		Math.random() * 9
-// 	)
-// 		.toFixed(0)
-// 		.padStart(1, "0")}5${(Math.random() * 9).toFixed(0).padStart(1, "0")}`
-// }
 
 export const makeBlockArray = (xSize: number, ySize: number) => {
 	let array: [Block[]] = [[]]
