@@ -1,14 +1,4 @@
-import {
-	fieldOfViewAngle,
-	raycastWidth,
-	topViewBlockSize,
-	topViewHeight,
-	topViewLeft,
-	topViewTop,
-	topViewWidth,
-	torchColor,
-	ySize
-} from "./constants"
+import { fieldOfViewAngle, raycastWidth, topViewBlockSize } from "./constants"
 import { drawDot } from "./drawDot"
 import { drawFloorAndSky } from "./drawFloorAndSky"
 import { getBlockAddressXY } from "./getBlockAddress"
@@ -16,50 +6,17 @@ import { getDistance } from "./getDistance"
 import { getDegrees, getRadians } from "./getRadians"
 import { isOOR } from "./isOOR"
 import { limitAngle } from "./limitAngle"
-import { renderInRaycast } from "./renderInRaycast"
-import { Block, Position, Ray, Vertical } from "./types"
+import { Block, BlocksToRender, Position } from "./types"
 
 export const raycast = (
 	position: Position,
 	blockArray: [Block[]],
 	ctx: CanvasRenderingContext2D
 ) => {
-	const isEdge = (x: number, y: number) => {
-		return (
-			(x % topViewBlockSize < 0.1 ||
-				x % topViewBlockSize > topViewBlockSize - 0.1) &&
-			(y % topViewBlockSize < 0.1 ||
-				y % topViewBlockSize > topViewBlockSize - 0.1)
-		)
-	}
-
-	// the angle the intercept makes to the surface: for shading
-	const getIntAngleX = (angle: number, sl: number, sd: number) => {
-		//up, left
-		if (sd === 0 && sl === 1) return 360 - angle
-		// up, right
-		if (sd === 0 && sl === 0) return angle
-		// down, left
-		if (sd === 1 && sl === 1) return angle - 180
-		// down, right
-		if (sd === 1 && sl === 0) return 180 - angle
-	}
-
-	// the angle the intercept makes to the surface: for shading
-	const getIntAngleY = (angle: number, sl: number, sd: number) => {
-		// up, left
-		if (sd === 0 && sl === 1) return angle - 270
-		// up, right
-		if (sd === 0 && sl === 0) return 90 - angle
-		// down, left
-		if (sd === 1 && sl === 1) return 270 - angle
-		// down, right
-		if (sd === 1 && sl === 0) return angle - 90
-	}
-
 	drawFloorAndSky(ctx)
-	let verticals: Vertical[] = []
-	let rays: Ray[] = []
+
+	// keep a list of the blocks already found
+	let blocksToRender: BlocksToRender = {}
 
 	// number of columns in a half
 	const n = raycastWidth / 2
@@ -91,10 +48,6 @@ export const raycast = (
 
 		// find closest horizontalIntersect
 		let searchEnd: boolean = false
-		let firstIntFound: boolean = false
-
-		let foundIntXH: number
-		let foundIntYH: number
 
 		// works facing both up and down
 
@@ -110,58 +63,32 @@ export const raycast = (
 			const intY = position.y - ssd * y
 			if (isOOR(intX, intY)) {
 				searchEnd = true
-				if (!firstIntFound) {
-					foundIntXH = intX
-					foundIntYH = intY
-				}
 			}
 			if (!searchEnd) {
-				const addr = getBlockAddressXY(
+				const address = getBlockAddressXY(
 					intX,
 					intY + topViewBlockSize / 2
 				)
-				const block = blockArray[addr.x][addr.y - su]
-				const state = block.state
-				if (state) {
-					verticals.push({
-						address: {
-							x: addr.x,
-							y: addr.y - su
-						},
-						blockDistance: getDistance(
-							addr.x * topViewBlockSize,
-							(addr.y - su) * topViewBlockSize,
-							position
-						),
-						block,
-						column,
-						angle,
-						intAngle: getIntAngleY(angle, sl, sd),
-						isEdge: isEdge(intX, intY),
-						distance: getDistance(intX, intY, position)
-					})
-					if (!firstIntFound) {
-						firstIntFound = true
-						foundIntXH = intX
-						foundIntYH = intY
+				const key = `${address.x},${address.y}`
+				const block = blockArray[address.x][address.y - su]
+				if (!blocksToRender[key] && block.state) {
+					blocksToRender[key] = {
+						address,
+						distance: getDistance(intX, intY, position),
+						switches: { su, sd, ssd, sl, sr, ssl }
 					}
 				}
-				i++
 			}
+			i++
 		}
 
-		// find closest verticalIntersect
-		// works looking either left or right
-
-		let foundIntXV: number
-		let foundIntYV: number
+		// find vertical intersects
 
 		// x value of the first vertical intercept
 		const x1v =
 			sr * topViewBlockSize - ssl * (position.x % topViewBlockSize)
 
 		searchEnd = false
-		firstIntFound = false
 		let j = 0
 		while (!searchEnd) {
 			// horizontal distance to next x intercept
@@ -174,40 +101,19 @@ export const raycast = (
 
 			if (isOOR(intX, intY)) {
 				searchEnd = true
-				if (!firstIntFound) {
-					foundIntXV = intX
-					foundIntYV = intY
-				}
 			}
 			if (!searchEnd) {
-				const addr = getBlockAddressXY(
+				const address = getBlockAddressXY(
 					intX + topViewBlockSize / 2,
 					intY
 				)
-				const block = blockArray[addr.x + ssl * sl][addr.y]
-				const state = block.state
-				if (state) {
-					verticals.push({
-						address: {
-							x: addr.x + ssl * sl,
-							y: addr.y
-						},
-						block,
-						blockDistance: getDistance(
-							(addr.x + ssl * sl) * topViewBlockSize,
-							addr.y * topViewBlockSize,
-							position
-						),
-						column,
-						angle,
-						intAngle: getIntAngleX(angle, sl, sd),
-						isEdge: isEdge(intX, intY),
-						distance: getDistance(intX, intY, position)
-					})
-					if (!firstIntFound) {
-						firstIntFound = true
-						foundIntXV = intX
-						foundIntYV = intY
+				const block = blockArray[address.x + ssl * sl][address.y]
+				const key = `${address.x},${address.y}`
+				if (!blocksToRender[key] && block.state) {
+					blocksToRender[key] = {
+						address,
+						distance: getDistance(intX, intY, position),
+						switches: { su, sd, ssd, sl, sr, ssl }
 					}
 				}
 				j++
@@ -215,24 +121,6 @@ export const raycast = (
 		}
 
 		/////////////////////////////////////////////////////////////
-
-		// draw torch light ray in topView
-		let foundIntX: number
-		let foundIntY: number
-
-		const hDistance = getDistance(foundIntXH, foundIntYH, position)
-		const vDistance = getDistance(foundIntXV, foundIntYV, position)
-
-		if (hDistance < vDistance) {
-			foundIntX = foundIntXH
-			foundIntY = foundIntYH
-		} else {
-			foundIntX = foundIntXV
-			foundIntY = foundIntYV
-		}
-
-		rays.push({ x: foundIntX, y: foundIntY })
 	}
-	renderInRaycast(verticals, position, yFactor, ctx)
-	return rays
+	return { blocksToRender, yFactor }
 }

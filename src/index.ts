@@ -25,6 +25,7 @@ import {
 	torchColor
 } from "./constants"
 import { handleTouchEnd, handleTouchMove } from "./handleTouch"
+import { renderInRaycast } from "./renderInRaycast"
 
 let lastFrame = 0
 
@@ -71,10 +72,14 @@ const renderLoop = (
 		if (timeStamp - lastFrame > frameCadence) {
 			lastFrame = timeStamp
 
-			const rays = raycast(position, blockArray, ctx)
+			const { blocksToRender, yFactor } = raycast(
+				position,
+				blockArray,
+				ctx
+			)
+			renderInRaycast(blockArray, blocksToRender, position, yFactor, ctx)
 			clipRaycast()
 			drawTopView(blockArray, ctx, position)
-			drawRaysInTopView(rays)
 			move(position, keyPresses, blockArray)
 		}
 	} catch (e) {
