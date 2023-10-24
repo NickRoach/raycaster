@@ -2,7 +2,7 @@ import { fillOuterWallBlocks } from "./fillOuterWallBlocks"
 import { move } from "./move"
 import { makeBlockArray } from "./makeBlockArray"
 import { resizeCanvas } from "./resizeCanvas"
-import { Block, KeyPresses, Position, Ray } from "./types"
+import { Block, KeyPresses, Position } from "./types"
 import { drawTopView } from "./drawTopView"
 import { handleClick } from "./handleClick"
 import { handleKeyDown, handleKeyUp } from "./handleKeyPress"
@@ -57,17 +57,6 @@ const renderLoop = (
 		ctx.closePath()
 	}
 
-	const drawRaysInTopView = (rays: Ray[]) => {
-		ctx.strokeStyle = torchColor
-		for (const ray of rays) {
-			ctx.beginPath()
-			ctx.moveTo(topViewLeft + position.x, topViewTop + position.y)
-			ctx.lineTo(topViewLeft + ray.x, topViewTop + ray.y)
-			ctx.stroke()
-			ctx.closePath()
-		}
-	}
-
 	try {
 		if (timeStamp - lastFrame > frameCadence) {
 			lastFrame = timeStamp
@@ -77,7 +66,7 @@ const renderLoop = (
 				blockArray,
 				ctx
 			)
-			renderInRaycast(blockArray, blocksToRender, position, yFactor, ctx)
+			renderInRaycast(blocksToRender, position, yFactor, ctx)
 			clipRaycast()
 			drawTopView(blockArray, ctx, position)
 			move(position, keyPresses, blockArray)

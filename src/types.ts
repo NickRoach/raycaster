@@ -24,25 +24,6 @@ export type KeyPresses = {
 	s: boolean
 }
 
-export type Vertical = {
-	address: {
-		x: number
-		y: number
-	}
-	block: Block
-	blockDistance: number
-	column: number
-	intAngle: number
-	angle: number
-	distance: number
-	isEdge: boolean
-}
-
-export type Ray = {
-	x: number
-	y: number
-}
-
 export type BlockAddress = {
 	x: number
 	y: number
@@ -50,6 +31,7 @@ export type BlockAddress = {
 
 export type BlocksToRender = {
 	[key: string]: {
+		block: Block
 		address: BlockAddress
 		distance: number
 		switches: {
@@ -61,4 +43,19 @@ export type BlocksToRender = {
 			ssl: -1 | 1
 		}
 	}
+}
+
+export type Faces = {
+	[key: string]: Vertex[]
+}
+
+export type Vertex = {
+	x: number
+	y: number
+	distanceCor: number
+}
+
+export type FaceWithDistance = {
+	[key: string]: Vertex[] | number
+	averageDistance: number
 }

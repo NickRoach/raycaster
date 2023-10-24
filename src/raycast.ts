@@ -46,10 +46,8 @@ export const raycast = (
 		// ssl is for "sign flip left". It is -1 when looking left
 		const ssl = sl === 1 ? -1 : 1
 
-		// find closest horizontalIntersect
+		// find horizontal intersects
 		let searchEnd: boolean = false
-
-		// works facing both up and down
 
 		// y value of the first horizontal intercept
 		const y1h =
@@ -70,9 +68,10 @@ export const raycast = (
 					intY + topViewBlockSize / 2
 				)
 				const key = `${address.x},${address.y}`
-				const block = blockArray[address.x][address.y - su]
+				const block = blockArray[address.x][address.y]
 				if (!blocksToRender[key] && block.state) {
 					blocksToRender[key] = {
+						block,
 						address,
 						distance: getDistance(intX, intY, position),
 						switches: { su, sd, ssd, sl, sr, ssl }
@@ -107,10 +106,11 @@ export const raycast = (
 					intX + topViewBlockSize / 2,
 					intY
 				)
-				const block = blockArray[address.x + ssl * sl][address.y]
+				const block = blockArray[address.x][address.y]
 				const key = `${address.x},${address.y}`
 				if (!blocksToRender[key] && block.state) {
 					blocksToRender[key] = {
+						block,
 						address,
 						distance: getDistance(intX, intY, position),
 						switches: { su, sd, ssd, sl, sr, ssl }
