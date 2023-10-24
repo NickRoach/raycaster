@@ -13,8 +13,8 @@ const topViewHeightMax = Math.min(
 	window.innerHeight - topViewTop - margin - 1,
 	window.innerWidth / 1.75
 )
-export const xSize = Math.floor(topViewWidthMax / topViewBlockSize)
-export const ySize = Math.floor(topViewHeightMax / topViewBlockSize)
+export const xSize = 69
+export const ySize = 69
 export const topViewHeight = topViewBlockSize * ySize
 export const topViewWidth = topViewBlockSize * xSize
 export const raycastLeft = margin
