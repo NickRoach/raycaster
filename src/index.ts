@@ -68,7 +68,6 @@ const renderLoop = (
 			)
 			renderInRaycast(blocksToRender, position, yFactor, ctx)
 			clipRaycast()
-			drawTopView(blockArray, ctx, position)
 			move(position, keyPresses, blockArray)
 		}
 	} catch (e) {

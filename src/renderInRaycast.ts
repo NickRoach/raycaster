@@ -11,7 +11,12 @@ import {
 	fieldOfViewAngle,
 	raycastWidth,
 	topViewBlockSize,
-	edgeDarken
+	bottomDarkness,
+	topDarkness,
+	northDarken,
+	southDarken,
+	westDarken,
+	eastDarken
 } from "./constants"
 import { getDegrees, getRadians } from "./getRadians"
 import { getXYVertices } from "./getXYVertices"
@@ -157,43 +162,71 @@ export const renderInRaycast = (
 			return b.averageDistance - a.averageDistance
 		})
 
-		const topDarkness = 1
-		const bottomDarkness = 0.5
+		const doRender = (vertices: Vertex[] | number) => {
+			if (typeof vertices === "number") return false
+			// this part fixes a bug where the top of a block is rendered badly when the player passes over the top of it
+			let cornersAbove = 0
+			let cornersBelow = 0
+			let cornersLeft = 0
+			let cornersRight = 0
+			for (const vertex of vertices) {
+				if (vertex.y > raycastTop + raycastHeight - 1) {
+					cornersAbove++
+				}
+				if (vertex.y < raycastTop + 1) {
+					cornersBelow++
+				}
+				if (vertex.x < raycastLeft + 1) {
+					cornersLeft++
+				}
+				if (vertex.x > raycastLeft + raycastWidth - 1) {
+					cornersRight++
+				}
+			}
+
+			if (
+				!(cornersBelow > 0 && cornersAbove > 0) &&
+				!(cornersLeft > 0 && cornersRight > 0)
+			)
+				return true
+			return false
+		}
 
 		// if the top or bottom is further than the sides, render it now
-		if (position.height > block.base) {
+		if (position.height > block.base && doRender(bott)) {
 			renderFace(bott, bottomDarkness)
 		}
-		if (position.height < block.base + block.height) {
+		if (position.height < block.base + block.height && doRender(top)) {
 			renderFace(top, topDarkness)
 		}
 
 		faceArray.forEach((face) => {
 			let darkness: number
 			let key = Object.keys(face)[0]
+			if (!doRender(face[key])) return
 			switch (key) {
 				case "north":
-					darkness = 0.9
+					darkness = northDarken
 					break
 				case "south":
-					darkness = 0.7
+					darkness = southDarken
 					break
 				case "west":
-					darkness = 0.8
+					darkness = westDarken
 					break
 				case "east":
-					darkness = 0.6
+					darkness = eastDarken
 					break
 			}
 			renderFace(Object.values(face)[0], darkness)
 		})
 
 		// if the top or bottom is closer than the sides, render it now
-		if (position.height < block.base) {
+		if (position.height < block.base && doRender(bott)) {
 			renderFace(bott, bottomDarkness)
 		}
 
-		if (position.height > block.base + block.height) {
+		if (position.height > block.base + block.height && doRender(top)) {
 			renderFace(top, topDarkness)
 		}
 	} // end of for loop
