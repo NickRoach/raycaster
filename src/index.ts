@@ -112,9 +112,9 @@ const initialize = () => {
 		lastTouch: null
 	}
 
-	canvas.addEventListener("click", (e) =>
-		handleClick(e, blockArray, ctx, position)
-	)
+	// canvas.addEventListener("click", (e) =>
+	// 	handleClick(e, blockArray, ctx, position)
+	// )
 	window.addEventListener("keydown", (e) => handleKeyDown(e, keyPresses))
 	window.addEventListener("keyup", (e) => handleKeyUp(e, keyPresses))
 	canvas.addEventListener("touchmove", (e) =>

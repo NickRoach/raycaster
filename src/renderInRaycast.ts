@@ -100,7 +100,7 @@ export const renderInRaycast = (
 				xOffset * xOffset + yOffset * yOffset
 			)
 
-			const distanceCor = vertDistance * Math.cos(vertTheta)
+			const distanceCor = Math.max(vertDistance * Math.cos(vertTheta), 0)
 
 			const blockUnitHeight =
 				(distanceToFillFov / distanceCor) * raycastWidth
@@ -143,6 +143,17 @@ export const renderInRaycast = (
 			ctx.lineTo(face[3].x, face[3].y)
 			ctx.fill()
 			ctx.closePath()
+
+			// ctx.beginPath()
+			// ctx.font = "10px Arial"
+			// ctx.fillStyle = "white"
+			// ctx.textAlign = "center"
+			// ctx.textBaseline = "middle"
+			// ctx.fillText("0", face[0].x, face[0].y)
+			// ctx.fillText("1", face[1].x, face[1].y)
+			// ctx.fillText("2", face[2].x, face[2].y)
+			// ctx.fillText("3", face[3].x, face[3].y)
+			// ctx.closePath()
 		}
 
 		const faceArray: FaceWithDistance[] = []
@@ -162,48 +173,17 @@ export const renderInRaycast = (
 			return b.averageDistance - a.averageDistance
 		})
 
-		const doRender = (vertices: Vertex[] | number) => {
-			if (typeof vertices === "number") return false
-			// this part fixes a bug where the top of a block is rendered badly when the player passes over the top of it
-			let cornersAbove = 0
-			let cornersBelow = 0
-			let cornersLeft = 0
-			let cornersRight = 0
-			for (const vertex of vertices) {
-				if (vertex.y > raycastTop + raycastHeight - 1) {
-					cornersAbove++
-				}
-				if (vertex.y < raycastTop + 1) {
-					cornersBelow++
-				}
-				if (vertex.x < raycastLeft + 1) {
-					cornersLeft++
-				}
-				if (vertex.x > raycastLeft + raycastWidth - 1) {
-					cornersRight++
-				}
-			}
-
-			if (
-				!(cornersBelow > 0 && cornersAbove > 0) &&
-				!(cornersLeft > 0 && cornersRight > 0)
-			)
-				return true
-			return false
-		}
-
 		// if the top or bottom is further than the sides, render it now
-		if (position.height > block.base && doRender(bott)) {
+		if (position.height > block.base) {
 			renderFace(bott, bottomDarkness)
 		}
-		if (position.height < block.base + block.height && doRender(top)) {
+		if (position.height < block.base + block.height) {
 			renderFace(top, topDarkness)
 		}
 
 		faceArray.forEach((face) => {
 			let darkness: number
 			let key = Object.keys(face)[0]
-			if (!doRender(face[key])) return
 			switch (key) {
 				case "north":
 					darkness = northDarken
@@ -222,11 +202,11 @@ export const renderInRaycast = (
 		})
 
 		// if the top or bottom is closer than the sides, render it now
-		if (position.height < block.base && doRender(bott)) {
+		if (position.height < block.base) {
 			renderFace(bott, bottomDarkness)
 		}
 
-		if (position.height > block.base + block.height && doRender(top)) {
+		if (position.height > block.base + block.height) {
 			renderFace(top, topDarkness)
 		}
 	} // end of for loop
