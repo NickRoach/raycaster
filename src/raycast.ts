@@ -73,8 +73,7 @@ export const raycast = (
 					blocksToRender[key] = {
 						block,
 						address,
-						distance: getDistance(intX, intY, position),
-						switches: { su, sd, ssd, sl, sr, ssl }
+						distance: getDistance(intX, intY, position)
 					}
 				}
 			}
@@ -112,15 +111,12 @@ export const raycast = (
 					blocksToRender[key] = {
 						block,
 						address,
-						distance: getDistance(intX, intY, position),
-						switches: { su, sd, ssd, sl, sr, ssl }
+						distance: getDistance(intX, intY, position)
 					}
 				}
 				j++
 			}
 		}
-
-		/////////////////////////////////////////////////////////////
 	}
 	return { blocksToRender, yFactor }
 }

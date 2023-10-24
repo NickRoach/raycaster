@@ -11,7 +11,6 @@ import {
 	fieldOfViewAngle,
 	raycastWidth,
 	topViewBlockSize,
-	shadePower,
 	edgeDarken
 } from "./constants"
 import { getDegrees, getRadians } from "./getRadians"
@@ -161,6 +160,7 @@ export const renderInRaycast = (
 		const topDarkness = 1
 		const bottomDarkness = 0.5
 
+		// if the top or bottom is further than the sides, render it now
 		if (position.height > block.base) {
 			renderFace(bott, bottomDarkness)
 		}
@@ -188,6 +188,7 @@ export const renderInRaycast = (
 			renderFace(Object.values(face)[0], darkness)
 		})
 
+		// if the top or bottom is closer than the sides, render it now
 		if (position.height < block.base) {
 			renderFace(bott, bottomDarkness)
 		}

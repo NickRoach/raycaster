@@ -34,14 +34,6 @@ export type BlocksToRender = {
 		block: Block
 		address: BlockAddress
 		distance: number
-		switches: {
-			su: 0 | 1
-			sd: 0 | 1
-			ssd: -1 | 1
-			sl: 0 | 1
-			sr: 0 | 1
-			ssl: -1 | 1
-		}
 	}
 }
 

@@ -41,7 +41,6 @@ export const raycastSkyHorizonColor = "#3399FF"
 export const raycastSkyZenithColor = "#0066FF"
 export const blockBoundaryColor = "#444444"
 export const darkenPower = 1
-export const shadePower = 0.1
 export const edgeDarken = 1
 export const initialX = topViewWidth / 2
 export const initialY = topViewHeight / 2
