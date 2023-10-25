@@ -81,15 +81,14 @@ export const renderInRaycast = (
 			const yOffset = position.y - v.y
 
 			// angle between zero and the vertex
-			const alpha = getDegrees(Math.atan(xOffset / yOffset))
+			const alpha = Math.atan(xOffset / yOffset)
 
 			// necessary while looking south
 			const corrector = v.y > position.y ? 1 : 0
 
 			// angle from the center of the field of view to the vertex. It corresponds to the column
-			const vertTheta = getRadians(
-				alpha - position.angle + 180 * corrector
-			)
+			const vertTheta =
+				alpha - getRadians(position.angle) + Math.PI * corrector
 
 			const calcColumn =
 				raycastLeft +
@@ -143,17 +142,6 @@ export const renderInRaycast = (
 			ctx.lineTo(face[3].x, face[3].y)
 			ctx.fill()
 			ctx.closePath()
-
-			// ctx.beginPath()
-			// ctx.font = "10px Arial"
-			// ctx.fillStyle = "white"
-			// ctx.textAlign = "center"
-			// ctx.textBaseline = "middle"
-			// ctx.fillText("0", face[0].x, face[0].y)
-			// ctx.fillText("1", face[1].x, face[1].y)
-			// ctx.fillText("2", face[2].x, face[2].y)
-			// ctx.fillText("3", face[3].x, face[3].y)
-			// ctx.closePath()
 		}
 
 		const faceArray: FaceWithDistance[] = []
