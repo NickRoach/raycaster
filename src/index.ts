@@ -3,8 +3,6 @@ import { move } from "./move"
 import { makeBlockArray } from "./makeBlockArray"
 import { resizeCanvas } from "./resizeCanvas"
 import { Block, KeyPresses, Position } from "./types"
-import { drawTopView } from "./drawTopView"
-import { handleClick } from "./handleClick"
 import { handleKeyDown, handleKeyUp } from "./handleKeyPress"
 import { raycast } from "./raycast"
 import {
@@ -19,13 +17,11 @@ import {
 	raycastLeft,
 	raycastTop,
 	raycastWidth,
-	raycastHeight,
-	topViewLeft,
-	topViewTop,
-	torchColor
+	raycastHeight
 } from "./constants"
 import { handleTouchEnd, handleTouchMove } from "./handleTouch"
 import { renderInRaycast } from "./renderInRaycast"
+import { moveBlocks } from "./moveBlocks"
 
 let lastFrame = 0
 
@@ -69,6 +65,7 @@ const renderLoop = (
 			renderInRaycast(blocksToRender, position, yFactor, ctx)
 			clipRaycast()
 			move(position, keyPresses, blockArray)
+			moveBlocks(blockArray)
 		}
 	} catch (e) {
 		console.log(e)

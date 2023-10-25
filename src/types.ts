@@ -4,6 +4,9 @@ export type Block = {
 	transparency: number
 	height: number
 	base: number
+	movingUp: boolean
+	minBase: number
+	maxBase: number
 }
 
 export type Position = {
