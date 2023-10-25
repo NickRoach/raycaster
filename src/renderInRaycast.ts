@@ -99,6 +99,7 @@ export const renderInRaycast = (
 				xOffset * xOffset + yOffset * yOffset
 			)
 
+			// this must be limited to 0 because it causes a render bug when vertices are behind the player position
 			const distanceCor = Math.max(vertDistance * Math.cos(vertTheta), 0)
 
 			const blockUnitHeight =
